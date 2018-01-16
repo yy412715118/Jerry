@@ -1,0 +1,12 @@
+{
+"date":"2018-01-08 14:42:02",
+"roominfo":{"gamestate":1,"rulename":"1圈4局","ruleid":1,"serviceid":"db7a96c4f43e11e7b51df7c5f889c43d","playTypeNum":"0,1,2,3,4,5,6,7,8,9,10,11","roomcircle":1,"mastername":"萌萌1号","roomid":188817,"playernum":2,"master":1007998},
+"player":[{"uid":1007998,"nickname":"萌萌1号","head":"http://192.168.1.115/head/1.jpg","ip":"192.168.1.107","ipold":"192.168.1.107","chairid":0,"state":1,"score":8,"playstate":0,"sex":2},{"uid":1007999,"nickname":"小贝贝","head":"http://192.168.1.115/head/4.jpg","ip":"192.168.1.107","ipold":"192.168.1.107","chairid":1,"state":1,"score":-8,"playstate":0,"sex":1}],
+"roundinfo":{"dianshu1":5,"dianshu2":4,"zhuangjiachairid":0,"startchairid":0,"startpos":9,"frontremove":26,"tailremove":0,"leftcount":86,"curchairid":-1,"curoutcard":-1,"lefttime":15,"curaction":1,"curround":2,"curcircle":1,"difen":1,"lianzhuang":1,"huangzhuang":0,"des":"第1圈(1/4) 第2局 连庄1次"},
+"carddata":[{"norcard":[86,8,12,9,56,48,74,3,40,69,108,47,20],"out":[],"weavecard":[],"ops":[],"lastout":-1},{"norcard":[53,103,100,61,46,87,63,55,95,34,52,73,66],"out":[],"weavecard":[],"ops":[],"lastout":-1}],
+"actions":[
+{"op":1,"leftcount":71,"frontremove":27,"cardid":68,"tailremove":0,"progress":67,"chairid":0,"lefttime":15,"opts":{"0":[],"1":[]}},
+{"op":5,"progress":68,"chairid":0,"vote":{"vote":[1,0],"result":[1,0],"state":0,"lefttime":180}},
+{"op":5,"progress":69,"chairid":1,"vote":{"vote":[1,1],"result":[1,1],"state":1,"lefttime":177}},
+{"result":{"detail":[{"score":0,"totalscore":8,"chairid":0,"card":[3,8,9,12,20,40,47,48,56,69,74,86,108,68]},{"score":0,"totalscore":-8,"chairid":1,"card":[34,46,52,53,55,61,63,66,73,87,95,100,103,-1]}],"winstate":[2,2]},"op":100,"progress":71,"wininfo":{"winner":[],"lose":-1,"type":0}},
+{"result":[{"score":8,"chairid":0,"detail":[{"name":"自摸 摸宝胡 庄家翻倍","count":1},{"name":"捉炮","count":0},{"name":"点炮","count":0}],"master":true},{"score":-8,"chairid":1,"detail":[{"name":"被自摸","count":1},{"name":"自摸","count":0},{"name":"捉炮","count":0},{"name":"点炮","count":0}],"master":false}],"op":101,"progress":71}]}

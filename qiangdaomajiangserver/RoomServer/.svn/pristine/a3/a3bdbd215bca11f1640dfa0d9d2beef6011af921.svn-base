@@ -1,0 +1,62 @@
+package com.lebin.server.netty.server.services;
+
+import atg.taglib.json.util.JSONObject;
+
+public class RoomService extends BaseService{
+	public JSONObject createRoom(int roomid,String token,long reqtime,int gameid,long uid,String groupid,int type,String host,int port,int serverid)
+	{
+		return dao.callReturnJsonPro("db_room.pro_create_room(?,?,?,?,?,?,?,?,?,?)", roomid,token,uid,groupid,gameid,type,serverid,host,port,reqtime);
+	}
+
+	public JSONObject joinRoom(int roomid,String token,long reqtime,int gameid,long uid)
+	{
+		
+		return dao.callReturnJsonPro("db_room.pro_join_room(?,?,?,?,?)", roomid,token,uid,gameid,reqtime);
+	}
+	public void freeRooms(int serverid)
+	{
+		dao.callPro("db_room.pro_free_rooms(?)", serverid);
+	}
+	/**
+	 * 
+	 * @param roomid
+	 * @param freetype '0：未解散 1:结束解散，2：投票解散 3：自动解散 4：维护解散 5：加入房间失败解散 6房主解散',
+	 * @return
+	 */
+	public JSONObject freeRoom(int roomid,int freetype)
+	{
+		
+		return dao.callReturnJsonPro("db_room.pro_free_room(?,?)", roomid,freetype);
+	}
+	public JSONObject freeJoinFailRoom(int roomid)
+	{
+		return freeRoom(roomid, 5);
+	}
+	/**
+	 * 结束解散
+	 * @param roomid
+	 * @return
+	 */
+	public JSONObject freeFinishRoom(int roomid)
+	{
+		return freeRoom(roomid, 1);
+	}
+	/**
+	 * 投票解散
+	 * @param roomid
+	 * @return
+	 */
+	public JSONObject freeRoomByVote(int roomid)
+	{
+		return freeRoom(roomid, 2);
+	}
+
+	public void exitRoom(long uid, int roomid, int gameid) {
+		
+		dao.callPro("db_room.pro_exit_room(?,?,?)", roomid,uid,gameid);
+	}
+	public JSONObject payRoom(int roomid,String serviceid)
+	{
+		return dao.callReturnJsonPro("db_room.pro_pay_room(?,?)", roomid,serviceid);
+	}
+}

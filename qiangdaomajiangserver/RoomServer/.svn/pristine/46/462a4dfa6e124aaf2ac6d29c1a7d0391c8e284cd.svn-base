@@ -1,0 +1,6 @@
+package com.hogense.dao.util;
+
+public class CacheData {
+	public Object data;
+	public long expiretime;
+}

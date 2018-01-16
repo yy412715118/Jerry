@@ -1,0 +1,66 @@
+package com.lebin.game.module;
+
+public interface Table {
+	
+	public void onInit(IRoom room,Object params);
+	/**
+	 *用户坐下
+	 */
+	public boolean onUserSitDown(int chairId,IUser user);
+	
+	/**
+	 *  用户起身
+	 */
+	public boolean onUserStandUp(int chairId,IUser user);
+	
+	/**
+	 * 发送游戏数据
+	 * @param progress 客户端进度
+	 * @param chairId
+	 * @param data
+	 * @return
+	 */
+	public boolean sendGameScene(long progress,int chairId,IUser user);
+	/**
+	 * 玩家准备
+	 * @param progress
+	 * @param chaireId
+	 * @return
+	 */
+	public boolean onReady(long progress,int chairId,IUser user);
+	/**
+	 * 玩家取消准备
+	 * @param chaireId
+	 * @return
+	 */
+	public boolean onCancelReady(int chairId,IUser user);
+	
+	/**
+	 * 玩家退出
+	 * @param chaireId
+	 * @return
+	 */
+	public boolean onUserExit(int chairId,IUser user);
+	
+	/**
+	 * 玩家掉线
+	 * @param chaireId
+	 * @return
+	 */
+	public boolean onUserOffLine(int chairId,IUser user);
+	
+	/**
+	 * 玩家重入
+	 * @param chaireId
+	 * @return
+	 */
+	public boolean onUserConnect(int chairId,IUser user);
+	
+	public IUser createUser(Object data);
+	public int getChairCount();
+	public IUser getUser(int chairId);
+	public void onMessage(int chairid,IUser user,Object data);
+	public int getGameSate();
+	
+	
+}

@@ -1,0 +1,309 @@
+package com.lebin.game.module.data;
+
+public class Define {
+	
+	//游戏状态
+	/*
+	 * 等待状态
+	 */
+	public static final int GAME_STATE_REAY=0;
+	
+	/*
+	 * 掷骰子中
+	 */
+	public static final int GAME_STATE_DICE=1;
+	
+	/*
+	 * 游戏中
+	 */
+	public static final int GAME_STATE_PLAY=2;
+	
+
+
+	/*
+	 * 游戏回合结束
+	 */
+	public static final int GAME_STATE_ROUND_OVER=3;
+	
+	
+	/*
+	 * 游戏结束状态
+	 */
+	public static final int GAME_STATE_OVER=4;
+	
+	//消息类型
+	
+	/**
+	 * 进牌
+	 */
+	public final static int MSG_IN_CARD=0;
+	
+	/**
+	 * 出牌
+	 */
+	public final static int MSG_OUT_CARD=1;
+	/**
+	 * 操作牌
+	 */
+	public final static int MSG_OP_CARD=2;
+	
+	/**
+	 * 同步场景
+	 */
+	public final static int MSG_SYN_SCENE=3;
+	
+	/**
+	 * 准备就绪
+	 */
+	public final static int MSG_READY=4;
+	
+	/**
+	 * 应答
+	 */
+	public final static int MSG_RESPONSE=5;
+	
+	/**
+	 * 聊天信息
+	 */
+	public final static int MSG_CHAT=127;
+	
+	/**
+	 * 解散房间
+	 */
+	public final static int MSG_FREE_ROOM=99;
+	
+	//动作定义
+	
+
+	/**
+	 * 下一步
+	 */
+	
+	public final static byte OP_READY=-1;
+	
+	/**
+	 * 无动作
+	 */
+	public final static byte OP_NONE=0;
+	/**
+	 * 进牌
+	 */
+	public final static byte OP_IN_CARD=1;
+	/**
+	 * 出牌
+	 */
+	public final static byte OP_OUT_CARD=2;
+	/**
+	 * 出组合牌
+	 */
+	public final static byte OP_WEAVECARD=3;
+	/**
+	 * 选择
+	 */
+	public final static byte OP_SELECT=4;
+	
+	
+	/**
+	 * 投票
+	 */
+	public final static byte OP_VOTE=5;
+	
+	
+	
+	/**
+	 * 一局结束
+	 */
+	public final static byte OP_ROUND_OVER=100;
+	
+	/**
+	 * 游戏结束
+	 */
+	public final static byte OP_GAME_OVER=101;
+	
+	
+	//胡牌定义
+	/*
+	 * 非胡牌
+	 */
+	public final static int HPK_NONE=0;
+	/*
+	 * 胡牌
+	 */
+	public final static int HPK_HU=1;
+	
+	// 大胡
+	/**
+	 * 碰碰胡
+	 */
+	public final static int HP_PENGPENG_HU=0x00000001;
+	
+	
+	/**
+	 * 清一色
+	 */
+	public final static int HP_QING_YI_SE=0x00000002;
+	
+	/**
+	 * 海底捞
+	 */
+	public final static int HP_HAI_DI_LAO=0x00000004;
+	
+	/**
+	 * 海底炮
+	 */
+	public final static int HP_HAI_DI_PAO=0x00000008;
+	
+	/**
+	 * 小七对
+	 */
+	public final static int HP_XIAO_QI_DUI=0x00000010;
+	
+	/**
+	 * 豪华七对
+	 */
+	public final static int HP_HAOHUA_QI_XIAO_DUI=0x00000020;
+	
+	/**
+	 * 超豪华七对
+	 */
+	public final static int HP_CHAO_HAOHUA_QI_XIAO_DUI=0x00000040;
+	
+	/**
+	 * 超超豪华七对
+	 */
+	public final static int HP_CHAO_CHAO_HAOHUA_QI_XIAO_DUI=0x00000080;
+	
+	/**
+	 * 小胡
+	 */
+	public final static int HP_XIAOHU=0x00000100;
+	
+	
+	/**
+	 * 杠上开花
+	 */
+	public final static int HP_GANG_KAI=0x00100000;
+	
+	/**
+	 * 抢杠胡
+	 */
+	public final static int HP_QIANG_GANG_HU=0x00200000;
+	
+	/**
+	 * 杠上炮
+	 */
+	public final static int HP_GANG_SHANG_PAO=0x00400000;
+	
+	/**
+	 * 天和
+	 */
+	public final static int HP_TIAN_HE=0x00800000;
+	
+	/**
+	 * 地和
+	 */
+	public final static int HP_DI_HE=0x01000000;
+	
+	/**
+	 * 手把一
+	 */
+	public final static int HP_SHOUBA_YI=0x02000000;
+	
+	/**
+	 * 扣听
+	 */
+	public final static int HP_KOUTING=0x04000000;
+	
+	/**
+	 * 自摸
+	 */
+	public final static int HP_ZIMO=0x10000000;
+	
+	/**
+	 * 吃胡
+	 */
+	public final static int HP_CHIHU=0x20000000;
+	
+
+	/**
+	 * 点炮
+	 */
+	public final static int HP_DIANPAO=0x40000000;
+	
+	/**
+	 * 一炮三响
+	 */
+	public final static int HP_YI_PAO_SANXIANG=0x80000000;
+	
+	
+	//玩家状态: 3个标识位  投票状态位|掉线状态位|准备状态位
+	
+	/**
+	 * 玩家未准备
+	 */
+	public final static byte USER_STATE_NOTREADY=0x00;
+	
+	/**
+	 * 玩家准备
+	 */
+	public final static byte USER_STATE_READY=0x01;
+	
+	/**
+	 * 玩家掉线
+	 */
+	public final static byte USER_STATE_OFFLINE=0x02;
+	
+	/**
+	 * 玩家同意
+	 */
+	public final static byte USER_STATE_AGREE=0x04;
+	
+	
+	//玩家游戏状态
+	
+	/**
+	 * 无状态
+	 * 
+	 */
+	public final static byte PLAY_STATE_NONE=0;
+	
+	/**
+	 * 听牌
+	 * 
+	 */
+	public final static byte PLAY_STATE_TING=0x01;
+	
+	/**
+	 * 自摸
+	 * 
+	 */
+	public final static byte PLAY_STATE_ZIMO=0x02;
+	
+	/**
+	 * 吃胡
+	 * 
+	 */
+	public final static byte PLAY_STATE_CHIHU=0x04;
+	
+	/**
+	 * 点炮
+	 * 
+	 */
+	public final static int PLAY_STATE_DIANPAO=0x08;
+	
+	
+	public static void main(String[] args) {
+		byte state=0;
+		state|=USER_STATE_READY;
+		state|=USER_STATE_OFFLINE;
+		state|=USER_STATE_AGREE;
+		//state^=USER_STATE_OFFLINE;
+		state^=USER_STATE_AGREE;
+		if((state&USER_STATE_AGREE)==USER_STATE_AGREE)
+			System.out.println("用户同意");
+		if((state&USER_STATE_OFFLINE)==USER_STATE_OFFLINE)
+			System.out.println("用户掉线");
+		if((state&USER_STATE_READY)==USER_STATE_READY)
+			System.out.println("用户已准备");
+	}
+}

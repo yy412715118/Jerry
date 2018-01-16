@@ -1,0 +1,17 @@
+package com.hogense.dao.util;
+
+public class EffectSql {
+	public final String sql;
+	public final Object[]args;
+	public final int mineffect;
+	public EffectSql(String sql,int mineffect,Object...args)
+	{
+		this.sql=sql;
+		this.args=args;
+		this.mineffect=mineffect;
+	}
+	public static EffectSql $(String sql,int mineffect,Object...args)
+	{
+		return new EffectSql(sql,mineffect,args);
+	}
+}

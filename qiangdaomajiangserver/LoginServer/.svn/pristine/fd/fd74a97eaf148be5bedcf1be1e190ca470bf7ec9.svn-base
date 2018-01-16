@@ -1,0 +1,119 @@
+package com.hogense.game.server.sevice;
+
+import java.sql.Connection;
+
+import org.apache.log4j.Logger;
+
+import com.hogense.data.ResponseData;
+import com.hogense.game.server.Config;
+import com.hogense.server.define.Status;
+import com.hogense.util.StringUtil;
+import com.hogense.util.UID;
+
+import atg.taglib.json.util.JSONObject;
+
+public class RoomService extends BaseService{
+	private static final Logger LOG = Logger.getLogger(RoomService.class.getName());
+	public ResponseData createRoom(String gameid,long uid,int type,ResponseData rsp)
+	{
+		Connection connection=null;
+		try {
+			connection=dao.getConnection();
+			if(connection==null)
+				return rsp.setStatus(Status.ERROR);
+		//	JSONObject curroom=dao.findUniqueJsonBySql("select  ", args)
+			Object[] data=(Object[])dao.findUniqueBySql(connection,"select needaccount,minplayer,maxplayer,supporttypeid from t_playtype where gameid=? and type=?", gameid,type);
+			if(data==null)
+				return rsp.setStatus(Status.PLAYTYPE_NOTFOUND);
+			Object needaccount=data[0];
+			Object minplayer=data[1];
+			Object maxplayer=data[2];
+			Object supporttypeid=data[3];
+			Object[] serverinfo=(Object[])dao.findUniqueBySql(connection,"select serverid,ip,port from t_roomserver where state=1 and supporttype like CONCAT('%',?,'%') order by roomcount asc limit 1",supporttypeid);
+			if(serverinfo==null)
+				return rsp.setStatus(Status.NO_AVSERVER);
+			Object serverid=serverinfo[0];
+			Object ip=serverinfo[1];
+			Object port=serverinfo[2];
+			connection.setAutoCommit(false);
+			int roomidlen=Config.getInt("roomid_length", 6);
+			long roomidbound=StringUtil.toLong("1"+StringUtil.createRepeatString("0", roomidlen));
+			System.out.println(roomidbound);
+			int v=dao.excuteUpdate(connection, "update t_account set freezing=freezing+?,account=account-? where gameid=? and uid=? and account>=?", needaccount,needaccount,gameid,uid,needaccount);
+			if(v==0)
+			{
+				LOG.info("用户余额不足");
+				return rsp.setStatus(Status.ACCOUNT_LESS);
+			}
+			String id=UID.newUUID();
+			int room_freetime=Config.getInt("room_freetime",60);//房间默认1小时释放
+			v=dao.excuteUpdate(connection,"update t_room set ownner=?,gameid=?,type=?,supporttypeid=?,needaccount=?,minplayer=?,maxplayer=?,curplayer=0,serverid=?,ip=?,port=?,state=1,id=?,createtime=NOW(),expirytime=DATE_ADD(NOW(),INTERVAL ? MINUTE) where state=-1 and roomid<? order by rand() limit 1", 
+					uid,gameid,type,supporttypeid,needaccount,minplayer,maxplayer,serverid,ip,port,id,room_freetime,roomidbound);
+			Long roomid=null;
+			if(v==0)
+			{
+				Object aidobj=(Object)dao.findUniqueBySql(connection,"SELECT AUTO_INCREMENT FROM information_schema.tables WHERE table_name='t_room'");
+				Long aiid;
+				if(aidobj==null)
+					aiid=null;
+				else 
+					aiid=Long.parseLong(aidobj.toString());
+				if(aiid==null||aiid>=roomidbound)
+				{
+					connection.rollback();
+					LOG.error("创建房间失败,房间号最大值"+(roomidbound-1)+",t_room.AUTO_INCREMENT="+aiid);
+					return  rsp.setStatus(Status.CREATE_ROOM_FAIL);
+				}
+				roomid=dao.insertWithReturnGeneratedKey(connection,"insert into t_room(ownner,gameid,type,supporttypeid,needaccount,minplayer,maxplayer,curplayer,serverid,ip,port,state,id,createtime,expirytime)values(?,?,?,?,?,?,?,0,?,?,?,1,?,NOW(),DATE_ADD(NOW(),INTERVAL ? MINUTE))", 
+						uid,gameid,type,supporttypeid,needaccount,minplayer,maxplayer,serverid,ip,port,id,room_freetime);
+				LOG.info("创建新房间");
+				if(roomid==-1||roomid>=roomidbound)
+				{
+					connection.rollback();
+					LOG.error("创建房间失败,房间号最大值"+(roomidbound-1)+",新房间号="+roomid);
+					return rsp.setStatus(Status.CREATE_ROOM_FAIL);
+				}
+				v=1;
+			}
+			if(v==0)
+			{
+				connection.rollback();
+				LOG.info("创建房间失败");
+				return rsp.setStatus(Status.CREATE_ROOM_FAIL);
+			}
+			dao.excuteUpdate("update t_roomserver set roomcount=roomcount+1 where serverid=?", serverinfo[0]);
+			LOG.info("创建房间成功");
+			connection.commit();
+			if(roomid==null)
+				roomid=(Long)dao.findUniqueBySql("select roomid from t_room where id=?", id);
+			if(roomid==null)
+			{
+				System.out.println("无法获取roomid");
+				return rsp.setStatus(Status.ERROR);
+			}
+			JSONObject rs=new JSONObject();
+			rs.put("roomid", String.format("%0"+roomidlen+"d",roomid));
+			rs.put("type", type);
+			rs.put("gameid", gameid);
+			rs.put("ip", ip);
+			rs.put("port", port);
+			rs.put("minplayer", minplayer);
+			rs.put("maxplayer", maxplayer);
+			rs.put("supporttypeid", supporttypeid);
+			rs.put("ownner", uid);
+			return rsp.setStatus(Status.OK).setData(rs);
+		} catch (Exception e) {
+			e.printStackTrace();
+			try {
+				connection.rollback();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+			
+		}
+		finally {
+			dao.close(connection);
+		}
+		return rsp.setStatus(Status.ERROR);
+	}
+}

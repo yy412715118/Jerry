@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configure id="server" class="org.eclipse.jetty.server.Server">  
+    <Call name="addConnector">  
+        <Arg>  
+            <New class="org.eclipse.jetty.server.ServerConnector"> 
+            	<Arg name="serverconnectorc"><Ref refid="server" /></Arg> 
+                <Set name="port">8081</Set>  
+            </New>  
+        </Arg>  
+    </Call>
+
+    <New id="dosFilter" class="com.hogense.game.server.filter.DoSFilter"/>
+     <New id="encodingFilter" class="com.hogense.game.server.filter.CharacterEncodingFilter"> 
+     	<Set name="charset">utf-8</Set>
+    </New>
+     <New id="ipFilter" class="com.hogense.game.server.filter.IpFilter"> 
+     	<Set name="deny">
+     		<Array type="string">
+     		</Array>
+     	</Set>
+     	
+     	<Set name="allow">
+     		<Array type="string">
+     			<Item>*</Item>
+     		</Array>
+     	</Set>  
+    </New>
+    <New id="dosFitlerinitMap" class="java.util.HashMap">
+    	<Put name="maxRequestsPerSec">10</Put>
+    	<Put name="delayMs">10000</Put>
+    </New>
+   
+    
+    <Set name="handler">  
+        <New class="org.eclipse.jetty.server.handler.HandlerList">  
+            <Set name="handlers">  
+                <Array type="org.eclipse.jetty.server.Handler">  
+                    <Item>  
+                    	<New class="com.hogense.game.server.context.ServerContext">
+                    		 <Call name="setDefaultsDescriptor">
+   								<Arg>config/webdefualt.xml</Arg>
+ 							 </Call> 
+                    	  	<Set name="gzipHandler">
+   								<New class="org.eclipse.jetty.server.handler.gzip.GzipHandler">
+      								<Set name="minGzipSize">2048</Set>      
+    							</New>
+ 							 </Set>
+                            <Set name="resourceBase">webcontent</Set>  
+                            <Set name="WelcomeFiles" >
+                            	 <Array type="string">
+                            	 	<Item>index.html</Item>
+                            	 </Array>
+                            </Set>
+                            <Call name="addServletFromScanner">
+                           		<Arg >
+                    				<Array type="string">
+                    					<Item>com.hogense.game.server.handler.AnySdkLoginServlet</Item>
+                    					<Item>com.hogense.game.server.handler.CodeServlet</Item>
+                    					<Item>com.hogense.game.server.handler.LoginHttpServlet</Item>
+						</Array>
+                    			</Arg>
+                   			</Call>
+                   			<Call name="addFilter">
+                   				<Arg>
+                   					<New class="org.eclipse.jetty.servlet.FilterHolder">
+                   						<Arg><Ref refid="dosFilter" /></Arg>
+                   							<Set name="initParameters">
+                   								<Ref refid="dosFitlerinitMap"/>
+                   							</Set>
+                   					</New>
+                   				</Arg>
+                    			<Arg>*</Arg>
+                   			</Call>
+                   			<Call name="addFilter">
+                   				<Arg>
+                   					<New class="org.eclipse.jetty.servlet.FilterHolder">
+                    					<Arg><Ref refid="ipFilter" /></Arg>
+                    				</New>
+                    			</Arg>
+                    			<Arg>*</Arg>
+                   			</Call>
+                   			<Call name="addFilter">
+                   				<Arg>
+                   					<New class="org.eclipse.jetty.servlet.FilterHolder">
+                    					<Arg><Ref refid="encodingFilter" /></Arg>
+                    				</New>
+                    			</Arg>
+                    			<Arg>*</Arg>
+                   			</Call>
+                        </New>
+                    </Item>
+                </Array>  
+            </Set>  
+        </New>  
+    </Set>  
+    
+</Configure>  

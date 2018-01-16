@@ -1,0 +1,15 @@
+package com.hogense.dao.util;
+
+public class Sql {
+	public final String sql;
+	public final Object[]args;
+	public Sql(String sql,Object...args)
+	{
+		this.sql=sql;
+		this.args=args;
+	}
+	public static Sql $(String sql,Object...args)
+	{
+		return new Sql(sql, args);
+	}
+}

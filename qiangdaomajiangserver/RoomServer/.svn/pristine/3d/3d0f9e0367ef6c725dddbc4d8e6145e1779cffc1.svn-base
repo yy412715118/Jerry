@@ -1,0 +1,652 @@
+package com.hogense.dao;
+
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.hogense.dao.util.Arg;
+import com.hogense.dao.util.DataSourceManager;
+import com.hogense.dao.util.EffectSql;
+import com.hogense.dao.util.OutArg;
+import com.hogense.dao.util.Sql;
+
+import atg.taglib.json.util.JSONArray;
+import atg.taglib.json.util.JSONObject;
+public class BaseDao  {
+	public Connection getConnection() throws SQLException
+	{
+		Connection connection=DataSourceManager.getManager().getDataSourceConnectionFactory().createConnection();
+		connection.setAutoCommit(true);
+		return connection;
+	}
+	public List<Object>findBySql(String sql,Object...args)
+	{
+		try {
+			Connection connection=getConnection();
+			if(connection==null)
+				return new ArrayList<>();
+			List<Object>rs=findBySql(connection,sql, args);
+			close(connection);
+			return rs;
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return new ArrayList<>();
+	}
+	public List<Object>findBySql(Connection connection,String sql,Object...args) 
+	{
+		List<Object>rs=new ArrayList<>();
+		try {
+			if(connection==null)
+				return rs;
+			PreparedStatement statement=(PreparedStatement) connection.prepareStatement(sql);
+			ResultSet set=null;
+			try {
+				if(args!=null)
+					for(int i=0;i<args.length;i++)
+						statement.setObject(i+1, args[i]);
+				set=statement.executeQuery();
+				ResultSetMetaData metaData=set.getMetaData();
+				int count=metaData.getColumnCount();
+				if(count==1)
+				{
+					while(set.next())
+						rs.add(set.getObject(1));
+				}
+				else 
+				{
+					while(set.next())
+					{
+						Object[] objects=new Object[count];
+						for(int i=0;i<count;i++)
+						{
+							objects[i]=set.getObject(i+1);
+						}
+						rs.add(objects);
+					}
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			close(statement);
+			close(set);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return rs;
+	}
+	public Object findUniqueBySql(String sql,Object...args)
+	{
+		Object rs=null;
+		try {
+			Connection connection=getConnection();
+			if(connection==null)
+				return null;
+			rs=findUniqueBySql(connection,sql,args);
+			close(connection);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return rs;
+	}
+	public Object findUniqueBySql(Connection connection,String sql,Object...args)
+	{
+		Object rs=null;
+		try {
+			if(connection==null)
+				return null;
+			PreparedStatement statement=(PreparedStatement) connection.prepareStatement(sql);
+			ResultSet set=null;
+			try {
+				if(args!=null)
+					for(int i=0;i<args.length;i++)
+						statement.setObject(i+1, args[i]);
+				set=statement.executeQuery();
+				if(set.next())
+				{
+					int count=statement.getMetaData().getColumnCount();
+					if(count==1)
+						rs=set.getObject(1);
+					else
+					{
+						Object[] objs=new Object[count];
+						for(int i=0;i<count;i++)
+							objs[i]=set.getObject(i+1);
+						rs=objs;
+					}
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			close(statement);
+			close(set);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	
+		return rs;
+	}
+	public JSONArray findJsonBySql(String sql,Object...args) 
+	{
+		try {
+			Connection connection=getConnection();
+			if(connection==null)
+				return new JSONArray();
+			JSONArray rs=findJsonBySql(connection,sql,args);
+			close(connection);
+			return rs;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new JSONArray();
+	}
+	public JSONArray findJsonBySql(Connection connection,String sql,Object...args) 
+	{
+		JSONArray rs=new JSONArray();
+		try {
+			if(connection==null)
+				return rs;
+			PreparedStatement statement=(PreparedStatement) connection.prepareStatement(sql);
+			ResultSet set=null;
+			try {
+				if(args!=null)
+					for(int i=0;i<args.length;i++)
+						statement.setObject(i+1, args[i]);
+				set=statement.executeQuery();
+				ResultSetMetaData metaData=set.getMetaData();
+				int count=metaData.getColumnCount();
+				while(set.next())
+				{
+					JSONObject objects=new JSONObject();
+					for(int i=0;i<count;i++)
+					{
+						objects.put(metaData.getColumnLabel(i+1), set.getObject(i+1));
+					}
+					rs.add(objects);
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			close(statement);
+			close(set);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return rs;
+	}
+	public JSONObject findUniqueJsonBySql(String sql,Object...args)
+	{
+		JSONObject rs=null;
+		try {
+			Connection connection=getConnection();
+			if(connection==null)
+				return null;
+			rs=findUniqueJsonBySql(connection,sql,args);
+			close(connection);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return rs;
+	}
+	public JSONObject findUniqueJsonBySql(Connection connection,String sql,Object...args)
+	{
+		JSONObject rs=null;
+		try {
+			if(connection==null)
+				return null;
+			PreparedStatement statement=(PreparedStatement) connection.prepareStatement(sql);
+			ResultSet set=null;
+			try {
+				if(args!=null)
+					for(int i=0;i<args.length;i++)
+						statement.setObject(i+1, args[i]);
+				set=statement.executeQuery();
+				ResultSetMetaData metaData=set.getMetaData();
+				int count=metaData.getColumnCount();
+				if(set.next())
+				{
+					JSONObject objects=new JSONObject();
+					for(int i=0;i<count;i++)
+					{
+						objects.put(metaData.getColumnLabel(i+1), set.getObject(i+1));
+					}
+					rs=objects;
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			close(statement);
+			close(set);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return rs;
+	}
+	public List<Map<String, Object>> findMapBySql(String sql,Object...args) 
+	{
+		try {
+			Connection connection=getConnection();
+			if(connection==null)
+				return new ArrayList<Map<String, Object>>();
+			List<Map<String, Object>>rs=findMapBySql(connection,sql, args);
+			close(connection);
+			return rs;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return new ArrayList<Map<String, Object>>();
+	}
+	public List<Map<String, Object>> findMapBySql(Connection connection,String sql,Object...args) 
+	{
+		List<Map<String, Object>> rs=new ArrayList<Map<String, Object>>();
+		try {
+			if(connection==null)
+				return rs;
+			PreparedStatement statement=(PreparedStatement) connection.prepareStatement(sql);
+			ResultSet set=null;
+			try {
+				if(args!=null)
+					for(int i=0;i<args.length;i++)
+						statement.setObject(i+1, args[i]);
+				set=statement.executeQuery();
+				ResultSetMetaData metaData=set.getMetaData();
+				int count=metaData.getColumnCount();
+				while(set.next())
+				{
+					Map<String,Object> objects=new HashMap<String,Object>();
+					for(int i=0;i<count;i++)
+					{
+						objects.put(metaData.getColumnLabel(i+1), set.getObject(i+1));
+					}
+					rs.add(objects);
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			close(statement);
+			close(set);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return rs;
+	}
+	public Map<String, Object> findUniqueMapBySql(String sql,Object...args) 
+	{
+		Map<String, Object> rs=null;
+		try {
+			Connection connection=getConnection();
+			if(connection==null)
+				return null;
+			rs=findUniqueMapBySql(connection,sql,args);
+			close(connection);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return rs;
+	}
+	public Map<String, Object> findUniqueMapBySql(Connection connection,String sql,Object...args) 
+	{
+		Map<String, Object> rs=null;
+		try {
+			if(connection==null)
+				return null;
+			PreparedStatement statement=(PreparedStatement) connection.prepareStatement(sql);
+			ResultSet set=null;
+			try {
+				if(args!=null)
+					for(int i=0;i<args.length;i++)
+						statement.setObject(i+1, args[i]);
+				set=statement.executeQuery();
+				ResultSetMetaData metaData=set.getMetaData();
+				int count=metaData.getColumnCount();
+				if(set.next())
+				{
+					Map<String, Object> objects=new HashMap<String, Object>();
+					for(int i=0;i<count;i++)
+					{
+						objects.put(metaData.getColumnLabel(i+1), set.getObject(i+1));
+					}
+					rs=objects;
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			close(statement);
+			close(set);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return rs;
+	}
+	public int excuteUpdate(Connection connection,String sql,Object...args) throws SQLException
+	{
+		int effectcount=0;
+		PreparedStatement statement=(PreparedStatement) connection.prepareStatement(sql);
+		if(args!=null)
+			for(int i=0;i<args.length;i++)
+				statement.setObject(i+1, args[i]);
+		effectcount=statement.executeUpdate();
+		close(statement);
+		return effectcount;
+	}
+	public int excuteUpdate(String sql,Object...args) 
+	{
+		int effectcount=0;
+		try {
+			Connection connection=getConnection();
+			if(connection==null)
+				return 0;
+			PreparedStatement statement=(PreparedStatement) connection.prepareStatement(sql);
+			try {
+				if(args!=null)
+					for(int i=0;i<args.length;i++)
+						statement.setObject(i+1, args[i]);
+				effectcount=statement.executeUpdate();
+			} catch (Exception e) {
+				e.printStackTrace();
+				
+			}
+			close(connection);
+			close(statement);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return effectcount;
+	}
+	public int excuteUpdate(int mineffectcount,Sql... sqls)
+	{
+		if(sqls==null||sqls.length==0)
+			return 0;
+		int rs=0;
+		try {
+			Connection connection=getConnection();
+			if(connection==null)
+				return 0;
+			connection.setAutoCommit(false);
+			try {
+				for(Sql sql:sqls)
+					rs+=excuteUpdate(connection,sql.sql,sql.args);
+				if(rs<mineffectcount)
+				{
+					rs=0;
+					connection.rollback();
+				}
+				else
+					connection.commit();
+			} catch (Exception e) {
+				e.printStackTrace();
+				connection.rollback();
+				rs=0;
+			}
+			close(connection);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return rs;
+		
+	}
+	public int excuteUpdate(EffectSql... sqls)
+	{
+		if(sqls==null||sqls.length==0)
+			return 0;
+		int rs=0;
+		try {
+			Connection connection=getConnection();
+			if(connection==null)
+				return 0;
+			connection.setAutoCommit(false);
+			try {
+				boolean flag=false;
+				for(EffectSql sql:sqls)
+				{
+					int c=excuteUpdate(connection,sql.sql,sql.args);
+					if(c<sql.mineffect)
+					{
+						connection.rollback();
+						flag=true;
+						rs=0;
+						break;
+					}
+					rs+=c;
+				}
+				if(!flag)
+					connection.commit();
+			} catch (Exception e) {
+				e.printStackTrace();
+				connection.rollback();
+				rs=0;
+			}
+			close(connection);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return rs;
+		
+	}
+	public int excuteUpdate(Sql... sqls)
+	{
+		if(sqls==null||sqls.length==0)
+			return 0;
+		int rs=0;
+		try {
+			Connection connection=getConnection();
+			if(connection==null)
+				return 0;
+			connection.setAutoCommit(false);
+			try {
+				for(Sql sql:sqls)
+					rs+=excuteUpdate(connection,sql.sql,sql.args);
+				connection.commit();
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				connection.rollback();
+				rs=0;
+			}
+			close(connection);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return rs;
+		
+	}
+	public int[] excuteBatch(String sql,Arg...args)
+	{
+		
+		int rs[]=null;
+		try {
+			Connection connection=getConnection();
+			if(connection==null)
+				return null;
+			connection.setAutoCommit(false);
+			PreparedStatement statement=(PreparedStatement) connection.prepareStatement(sql);
+			if(args!=null)
+			{
+				for(int i=0;i<args.length;i++)
+				{
+					for(int j=0;j<args[i].args.length;j++)
+						statement.setObject(j+1, args[i].args[j]);
+					statement.addBatch();
+				}
+			}
+			try {
+				rs=statement.executeBatch();
+				connection.commit();
+			} catch (Exception e) {
+				e.printStackTrace();
+				connection.rollback();
+				rs=null;
+			}
+			close(connection);
+			close(statement);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return rs;
+		
+	}
+	public  Long insertWithReturnGeneratedKey(Connection connection,final String sql,final Object...args)  {
+		long id=-1;
+		try {
+			if(connection==null)
+				return id;
+			PreparedStatement statement=(PreparedStatement) connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
+			ResultSet set=null;
+			try {
+				if(args!=null)
+					for(int i=0;i<args.length;i++)
+						statement.setObject(i+1, args[i]);
+				statement.executeUpdate();
+				set=statement.getGeneratedKeys();
+				if(set!=null&&set.next())
+					id=set.getLong(1);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			close(statement);
+			close(set);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return id;
+	}
+	public  Long insertWithReturnGeneratedKey(final String sql,final Object...args)  {
+		long id=-1;
+		try {
+			Connection connection=getConnection();
+			if(connection==null)
+				return id;
+			id=insertWithReturnGeneratedKey(connection, sql, args);
+			close(connection);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return id;
+	}
+	
+	public boolean callPro(String pro,Object...args )
+	{
+		boolean rs=false;
+		Connection connection=null;
+		try {
+			connection=getConnection();
+			CallableStatement statement=connection.prepareCall("{ CALL "+pro+"}");
+			List<Integer>index=new ArrayList<>();
+			if(args!=null)
+			{
+				for(int i=0;i<args.length;i++)
+				{
+					Object arg=args[i];
+					if(arg instanceof OutArg)
+					{
+						statement.registerOutParameter(i+1, ((OutArg) arg).type);
+						index.add(i);
+					}
+					else 
+					{
+						statement.setObject(i+1, arg);
+						System.out.print(arg+" ");
+					}
+				}
+				System.out.println();
+			}
+			rs=statement.execute();
+			for(int i:index)
+				((OutArg)args[i]).value=statement.getObject(i+1);
+			close(statement);
+			return rs;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			close(connection);
+		}
+		return false;
+	}
+	public JSONObject callReturnJsonPro(String pro,Object...args )
+	{
+		JSONObject rs=null;
+		Connection connection=null;
+		try {
+			connection=getConnection();
+			CallableStatement statement=connection.prepareCall("{ CALL "+pro+"}");
+			if(args!=null)
+			{
+				for(int i=0;i<args.length;i++)
+					statement.setObject(i+1, args[i]);
+			}
+			boolean hs=statement.execute();
+			if(hs)
+			{
+				ResultSet set=statement.getResultSet();
+				if(set.next())
+				{
+					ResultSetMetaData metaData=set.getMetaData();
+					int count=metaData.getColumnCount();
+					JSONObject objects=new JSONObject();
+					for(int i=0;i<count;i++)
+					{
+						Object object=set.getObject(i+1);
+						objects.put(metaData.getColumnLabel(i+1),object instanceof byte[]?new String((byte[])object):object);
+					}
+					rs=objects;
+				}
+				close(set);
+			}
+			close(statement);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			close(connection);
+		}
+		return rs;
+	}
+	public void close(Statement statement)
+	{
+		try {
+			if(statement!=null)
+				statement.close();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+	public void close(ResultSet set)
+	{
+		try {
+			if(set!=null)
+				set.close();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+	public void close(Connection connection)
+	{
+		try {
+			if(connection!=null)
+				connection.close();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+}

@@ -1,0 +1,67 @@
+package com.hogense.game.server.sevice;
+
+import java.util.UUID;
+
+import com.hogense.util.MD5Util;
+
+import atg.taglib.json.util.JSONObject;
+
+public class UserService extends BaseService{
+	private String createAccessToken(String gameid)
+	{
+		return MD5Util.MD5(UUID.randomUUID().toString()+"_"+gameid).toLowerCase();
+	}
+	public JSONObject login(String ip,String gameid,String devicdeid,JSONObject userinfo,int type)
+	{
+		try {
+			
+			String openid=userinfo.getString("openid");
+			String nickname=userinfo.getString("nickname");
+			String head=userinfo.getString("head");
+			String sex=userinfo.getString("sex");
+			return login(ip, gameid, devicdeid, openid, nickname, head, type,sex);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	public JSONObject login(String ip,String gameid,String devicdeid,String openid,String nickname,String head,int type,String sex)
+	{
+		try {
+			String token=createAccessToken(gameid);
+			JSONObject rs=dao.callReturnJsonPro("db_account.pro_login_openid(?,?,?,?,?,?,?,?,?)", openid,nickname,head,type,gameid,ip,token,devicdeid,sex);
+			if(rs!=null&&rs.getInt("status")==200)
+			{
+				JSONObject curroom=getCurRoomServerAddress(rs.getLong("uid"), gameid);
+				if(curroom!=null&&curroom.has("roomid"))
+				{
+					rs.put("cur", curroom);
+				}
+			}
+			return rs;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	public JSONObject getCurRoomServerAddress(long uid,String gameid)
+	{
+		JSONObject rs=dao.findUniqueJsonBySql("select t_gameinfo.serverid,t_gameinfo.host,"
+				+" t_gameinfo.port,t_room.roomid from db_room.t_room left join db_gamedata.t_gameinfo"
+			+" on t_gameinfo.serviceid=t_room.id where t_room.id=(select lockserviceid from db_room.t_roomlock where uid=? and gameid=?) and t_gameinfo.freestate=0", uid,gameid);
+		return rs;
+	}
+	public JSONObject getGuestInfo(String openid)
+	{
+		JSONObject rs=dao.findUniqueJsonBySql("select nickname,head,sex"
+				+" from db_account.t_user where openid=? and type=0", openid);
+		return rs;
+	}
+	public JSONObject getAccountInfo(String uid,String psw)
+	{
+		JSONObject rs=dao.findUniqueJsonBySql("select nickname,head,sex,openid"
+				+" from db_account.t_user where uid=? and psw=? and type=2", uid,psw);
+		return rs;
+	}
+	
+}

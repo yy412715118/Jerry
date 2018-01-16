@@ -1,0 +1,66 @@
+package com.lebin.server.util;
+
+import redis.clients.jedis.Jedis;
+
+public class CacheManager {
+	public static String get(String key)
+	{
+		Jedis jedis=null;
+		try {
+			jedis=RedisUtil.getJedis();
+			if(jedis!=null)
+				return jedis.get(key);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			RedisUtil.returnResource(jedis);
+		}
+		return null;
+	}
+	public static byte[] get(byte[] key)
+	{
+		Jedis jedis=null;
+		try {
+			jedis=RedisUtil.getJedis();
+			if(jedis!=null)
+				return jedis.get(key);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			RedisUtil.returnResource(jedis);
+		}
+		return null;
+	}
+	public static Boolean getBit(byte[] key,long offset)
+	{
+		Jedis jedis=null;
+		try {
+			jedis=RedisUtil.getJedis();
+			if(jedis!=null)
+				return jedis.getbit(key, offset);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			RedisUtil.returnResource(jedis);
+		}
+		return null;
+	}
+	public static Boolean getBit(String key,long offset)
+	{
+		Jedis jedis=null;
+		try {
+			jedis=RedisUtil.getJedis();
+			if(jedis!=null)
+				return jedis.getbit(key, offset);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			RedisUtil.returnResource(jedis);
+		}
+		return null;
+	}
+}

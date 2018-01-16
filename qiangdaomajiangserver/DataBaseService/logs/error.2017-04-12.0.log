@@ -1,0 +1,98 @@
+2017-04-12 22:57:12 [main] ERROR com.hogense.redis.RedisDataSourceImpl - getRedisClent error
+redis.clients.jedis.exceptions.JedisException: Could not get a resource from the pool
+	at redis.clients.util.Pool.getResource(Pool.java:51)
+	at redis.clients.jedis.ShardedJedisPool.getResource(ShardedJedisPool.java:36)
+	at com.hogense.redis.RedisDataSourceImpl.getRedisClient(RedisDataSourceImpl.java:22)
+	at com.hogense.redis.RedisClientTemplate.set(RedisClientTemplate.java:46)
+	at com.hogense.service.Server.main(Server.java:23)
+Caused by: java.util.NoSuchElementException: Unable to validate object
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:506)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:363)
+	at redis.clients.util.Pool.getResource(Pool.java:49)
+	... 4 common frames omitted
+2017-04-12 22:57:12 [main] ERROR com.hogense.redis.RedisDataSourceImpl - getRedisClent error
+redis.clients.jedis.exceptions.JedisException: Could not get a resource from the pool
+	at redis.clients.util.Pool.getResource(Pool.java:51)
+	at redis.clients.jedis.ShardedJedisPool.getResource(ShardedJedisPool.java:36)
+	at com.hogense.redis.RedisDataSourceImpl.getRedisClient(RedisDataSourceImpl.java:22)
+	at com.hogense.redis.RedisClientTemplate.get(RedisClientTemplate.java:70)
+	at com.hogense.service.Server.main(Server.java:24)
+Caused by: java.util.NoSuchElementException: Unable to validate object
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:506)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:363)
+	at redis.clients.util.Pool.getResource(Pool.java:49)
+	... 4 common frames omitted
+2017-04-12 23:00:36 [main] ERROR com.hogense.redis.RedisDataSourceImpl - getRedisClent error
+redis.clients.jedis.exceptions.JedisException: Could not get a resource from the pool
+	at redis.clients.util.Pool.getResource(Pool.java:51)
+	at redis.clients.jedis.ShardedJedisPool.getResource(ShardedJedisPool.java:36)
+	at com.hogense.redis.RedisDataSourceImpl.getRedisClient(RedisDataSourceImpl.java:22)
+	at com.hogense.redis.RedisClientTemplate.set(RedisClientTemplate.java:46)
+	at com.hogense.service.Server.main(Server.java:23)
+Caused by: java.util.NoSuchElementException: Unable to validate object
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:506)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:363)
+	at redis.clients.util.Pool.getResource(Pool.java:49)
+	... 4 common frames omitted
+2017-04-12 23:00:36 [main] ERROR com.hogense.redis.RedisDataSourceImpl - getRedisClent error
+redis.clients.jedis.exceptions.JedisException: Could not get a resource from the pool
+	at redis.clients.util.Pool.getResource(Pool.java:51)
+	at redis.clients.jedis.ShardedJedisPool.getResource(ShardedJedisPool.java:36)
+	at com.hogense.redis.RedisDataSourceImpl.getRedisClient(RedisDataSourceImpl.java:22)
+	at com.hogense.redis.RedisClientTemplate.get(RedisClientTemplate.java:70)
+	at com.hogense.service.Server.main(Server.java:24)
+Caused by: java.util.NoSuchElementException: Unable to validate object
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:506)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:363)
+	at redis.clients.util.Pool.getResource(Pool.java:49)
+	... 4 common frames omitted
+2017-04-12 23:11:48 [main] ERROR com.hogense.redis.RedisDataSourceImpl - getRedisClent error
+redis.clients.jedis.exceptions.JedisException: Could not get a resource from the pool
+	at redis.clients.util.Pool.getResource(Pool.java:51)
+	at redis.clients.jedis.ShardedJedisPool.getResource(ShardedJedisPool.java:36)
+	at com.hogense.redis.RedisDataSourceImpl.getRedisClient(RedisDataSourceImpl.java:22)
+	at com.hogense.redis.RedisClientTemplate.getAllShards(RedisClientTemplate.java:3082)
+	at com.hogense.service.Server.main(Server.java:22)
+Caused by: java.util.NoSuchElementException: Unable to validate object
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:506)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:363)
+	at redis.clients.util.Pool.getResource(Pool.java:49)
+	... 4 common frames omitted
+2017-04-12 23:12:16 [main] ERROR com.hogense.redis.RedisDataSourceImpl - getRedisClent error
+redis.clients.jedis.exceptions.JedisException: Could not get a resource from the pool
+	at redis.clients.util.Pool.getResource(Pool.java:51)
+	at redis.clients.jedis.ShardedJedisPool.getResource(ShardedJedisPool.java:36)
+	at com.hogense.redis.RedisDataSourceImpl.getRedisClient(RedisDataSourceImpl.java:22)
+	at com.hogense.redis.RedisClientTemplate.getAllShards(RedisClientTemplate.java:3082)
+	at com.hogense.service.Server.main(Server.java:22)
+Caused by: java.util.NoSuchElementException: Unable to validate object
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:506)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:363)
+	at redis.clients.util.Pool.getResource(Pool.java:49)
+	... 4 common frames omitted
+2017-04-12 23:14:24 [main] ERROR com.hogense.redis.RedisDataSourceImpl - getRedisClent error
+redis.clients.jedis.exceptions.JedisException: Could not get a resource from the pool
+	at redis.clients.util.Pool.getResource(Pool.java:51)
+	at redis.clients.jedis.ShardedJedisPool.getResource(ShardedJedisPool.java:36)
+	at com.hogense.redis.RedisDataSourceImpl.getRedisClient(RedisDataSourceImpl.java:22)
+	at com.hogense.redis.RedisClientTemplate.getAllShards(RedisClientTemplate.java:3082)
+	at com.hogense.service.Server.main(Server.java:23)
+Caused by: java.util.NoSuchElementException: Unable to validate object
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:506)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:363)
+	at redis.clients.util.Pool.getResource(Pool.java:49)
+	... 4 common frames omitted
+2017-04-12 23:14:24 [main] ERROR com.hogense.service.Server - redis服务器无法连接
+2017-04-12 23:14:54 [main] ERROR com.hogense.redis.RedisDataSourceImpl - getRedisClent error
+redis.clients.jedis.exceptions.JedisException: Could not get a resource from the pool
+	at redis.clients.util.Pool.getResource(Pool.java:51)
+	at redis.clients.jedis.ShardedJedisPool.getResource(ShardedJedisPool.java:36)
+	at com.hogense.redis.RedisDataSourceImpl.getRedisClient(RedisDataSourceImpl.java:22)
+	at com.hogense.redis.RedisClientTemplate.getAllShards(RedisClientTemplate.java:3082)
+	at com.hogense.service.Server.main(Server.java:23)
+Caused by: java.util.NoSuchElementException: Unable to validate object
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:506)
+	at org.apache.commons.pool2.impl.GenericObjectPool.borrowObject(GenericObjectPool.java:363)
+	at redis.clients.util.Pool.getResource(Pool.java:49)
+	... 4 common frames omitted
+2017-04-12 23:14:54 [main] ERROR com.hogense.service.Server - redis服务器无法连接

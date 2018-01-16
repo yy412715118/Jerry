@@ -1,0 +1,12 @@
+package com.hogense.dao.util;
+
+public class Arg {
+	public final Object args[];
+	public Arg(Object...args) {
+		this.args=args;
+	}
+	public static Arg $(Object...args)
+	{
+		return new Arg(args);
+	}
+}

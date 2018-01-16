@@ -1,0 +1,17 @@
+package com.lebin.game.qdmj.server;
+
+import org.apache.log4j.PropertyConfigurator;
+
+import com.lebin.game.qdmj.Room;
+import com.lebin.server.netty.server.RoomServer;
+import com.lebin.server.util.ConfigInfo;
+
+public class Lanucher {
+	public static void main(String[] args) throws Exception {
+		PropertyConfigurator.configure("config/log4j.properties");
+		ConfigInfo configInfo=new ConfigInfo();
+		new RoomServer().run(configInfo,Room.class);
+		
+	}
+	
+}

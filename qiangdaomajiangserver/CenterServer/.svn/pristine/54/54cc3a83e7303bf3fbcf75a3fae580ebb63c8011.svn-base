@@ -1,0 +1,36 @@
+package com.hogense.game.server.sevice;
+
+import java.util.UUID;
+
+import com.hogense.game.server.Config;
+import com.hogense.util.MD5Util;
+
+import atg.taglib.json.util.JSONObject;
+
+public class UserService extends BaseService{
+	private String createAccessToken(String gameid)
+	{
+		return MD5Util.MD5(UUID.randomUUID().toString()+"_"+gameid).toLowerCase();
+	}
+	public JSONObject login(String ip,String gameid,String devicdeid,JSONObject userinfo,int type)
+	{
+		try {
+			
+			String openid=userinfo.getString("openid");
+			String nickname=userinfo.getString("nickname");
+			String head=userinfo.getString("head");
+			String token=createAccessToken(gameid);
+			JSONObject rs=dao.callReturnJsonPro("db_account.pro_login_openid(?,?,?,?,?,?,?,?)", openid,nickname,head,type,gameid,ip,token,devicdeid);
+			return rs;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	public boolean visitToken(String token,String gameid,long uid,String reqtime)
+	{
+		Object object=dao.findUniqueBySql("select 1 from db_account.t_account  where gameid=? and uid=? and MD5(CONCAT(uid,gameid,accesstoken,?))=?", gameid,uid,reqtime,token);
+		return object!=null;
+	
+	}
+}

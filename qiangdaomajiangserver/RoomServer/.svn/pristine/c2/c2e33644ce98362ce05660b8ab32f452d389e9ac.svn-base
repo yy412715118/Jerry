@@ -1,0 +1,82 @@
+package com.lebin.server.netty.server;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+
+import com.lebin.pakageutil.PackageScanner;
+import com.lebin.server.annotation.MessageHandler;
+import com.lebin.server.annotation.Service;
+import com.lebin.server.netty.serviceimpl.RoomManager;
+public class MessageHandlerFactory {
+	private static final Logger LOG = Logger.getLogger(MessageHandlerFactory.class.getName());
+	private static final Map<String, Method>handlerMethod=new HashMap<String, Method>();
+	public static void load()
+	{
+		String scanpackages[]={"com.lebin.server.netty.server"};
+		Set<Class<?>>set=new HashSet<>();
+		for(String scanpackage:scanpackages)
+		{
+			PackageScanner scn=new PackageScanner(scanpackage);
+			scn.setAnnocation(Service.class);
+			try {
+				Set<Class<?>>cls=scn.scan();
+				if(cls!=null)
+					set.addAll(cls);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		for(Class<?> cls:set)
+		{
+			Method methods[]=cls.getDeclaredMethods();
+			for(Method method:methods)
+			{
+				MessageHandler t=method.getAnnotation(MessageHandler.class);
+				if(t!=null)
+				{
+					if(handlerMethod.containsKey(t.value()))
+					{
+						String msg="重复定义消息处理方法："+t.value()+"@"+cls.getName()+"."+method.getName();
+						LOG.error(msg);
+						throw new InstantiationError(msg);
+					}
+					method.setAccessible(true);
+					handlerMethod.put(t.value(), method);
+					LOG.info("注册消息处理方法："+t.value()+"=>"+cls.getName()+"."+method.getName());
+				}
+			}
+		}
+	}
+	public static boolean invokeIfExists(Object target,String msg,Object...args) throws Exception 
+	{
+		Method method=handlerMethod.get(msg);
+		if(method==null)
+			return false;
+		 method.invoke(target, args);
+		 return true;
+	}
+	public static Object invoke(Object target,String msg,Object...args) throws Exception 
+	{
+		Method method=handlerMethod.get(msg);
+		if(method==null)
+			throw new Exception("找不到消息："+msg+" 的处理方法");
+		return method.invoke(target, args);
+	}
+	public static void main(String[] args) {
+		load();
+		try {
+			
+			invoke(new RoomManager(), "join","nihao",10);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}

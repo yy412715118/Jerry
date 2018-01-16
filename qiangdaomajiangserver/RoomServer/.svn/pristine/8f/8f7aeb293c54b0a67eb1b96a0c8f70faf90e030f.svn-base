@@ -1,0 +1,20 @@
+package com.lebin.server.netty.server.services;
+
+import com.hogense.dao.BaseDao;
+import com.lebin.game.module.data.Player;
+
+import atg.taglib.json.util.JSONObject;
+
+public class AccountService {
+	private static BaseDao dao=new BaseDao();
+	public static Player login(long uid,String token,int gameid,long reqtime)
+	{
+		/*JSONObject obj=dao.findUniqueJsonBySql("select t_user.uid,t_user.nickname,t_user.head,t_account.account from db_account.t_account left join db_account.t_user on t_user.uid=t_account.uid where t_account.gameid=? "
+				+ " and t_account.uid=? and t_account.accesstoken=?", gameid,uid,token);*/
+		JSONObject obj=dao.findUniqueJsonBySql("select t_user.uid,t_user.nickname,t_user.head,t_account.account,t_user.sex from db_account.t_account left join db_account.t_user on t_user.uid=t_account.uid where t_account.gameid=? "
+				+ " and t_account.uid=? and MD5(CONCAT(t_account.uid,t_account.gameid,t_account.accesstoken,?))=?", gameid,uid,reqtime,token);
+		if(obj==null)
+			return null;
+		return Player.create(obj.toString(), Player.class);
+	}
+}

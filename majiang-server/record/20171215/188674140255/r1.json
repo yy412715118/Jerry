@@ -1,0 +1,16 @@
+{
+"date":"2017-12-15 14:03:04",
+"roominfo":{"gamestate":1,"rulename":"1圈4局","ruleid":1,"serviceid":"97faf982e15d11e783b9dff736292a5a","mastername":"天天","roomid":188674,"playernum":2,"master":1007988},
+"player":[{"uid":1007988,"nickname":"天天","head":"http://192.168.1.115/head/3.jpg","ip":"192.168.1.125","ipold":"192.168.1.125","chairid":0,"state":1,"score":0,"playstate":0,"sex":1},{"uid":1007992,"nickname":"乐鲂","head":"http://192.168.1.115/head/2.jpg","ip":"192.168.1.125","ipold":"192.168.1.125","chairid":1,"state":1,"score":0,"playstate":0,"sex":2}],
+"roundinfo":{"dianshu1":5,"dianshu2":1,"zhuangjiachairid":1,"startchairid":0,"startpos":6,"frontremove":26,"tailremove":0,"leftcount":86,"curchairid":-1,"curoutcard":-1,"lefttime":0,"curaction":1,"curround":1,"curcircle":1,"difen":1,"lianzhuang":0,"huangzhuang":0,"des":"第1圈(1/4) 第1局"},
+"carddata":[{"norcard":[86,102,28,107,52,76,50,88,51,18,45,1,99],"out":[],"weavecard":[],"ops":[],"lastout":-1},{"norcard":[36,43,71,12,26,17,95,93,15,77,13,0,9],"out":[],"weavecard":[],"ops":[],"lastout":-1}],
+"actions":[
+{"op":1,"leftcount":71,"frontremove":27,"cardid":61,"tailremove":0,"progress":3,"chairid":1,"lefttime":15,"opts":{"0":[],"1":[]}},
+{"op":2,"cardid":61,"progress":4,"chairid":1,"opts":{"0":[],"1":[]}},
+{"op":1,"leftcount":70,"frontremove":28,"cardid":60,"tailremove":0,"progress":5,"chairid":0,"lefttime":15,"opts":{"0":[],"1":[]}},
+{"op":2,"cardid":60,"progress":6,"chairid":0,"opts":{"0":[],"1":[]}},
+{"op":1,"leftcount":69,"frontremove":29,"cardid":3,"tailremove":0,"progress":7,"chairid":1,"lefttime":15,"opts":{"0":[],"1":[]}},
+{"op":5,"progress":8,"chairid":0,"vote":{"vote":[1,0],"result":[1,0],"state":0,"lefttime":180}},
+{"op":5,"progress":9,"chairid":1,"vote":{"vote":[1,1],"result":[1,1],"state":1,"lefttime":177}},
+{"result":{"detail":[{"score":0,"totalscore":0,"chairid":0,"card":[1,18,28,45,50,51,52,76,86,88,99,102,107,-1]},{"score":0,"totalscore":0,"chairid":1,"card":[0,9,12,13,15,17,26,36,43,71,77,93,95,3]}],"winstate":[2,2]},"op":100,"progress":11,"wininfo":{"winner":[],"lose":-1,"type":0}},
+{"result":[{"score":0,"chairid":0,"detail":[{"name":"自摸","count":0},{"name":"捉炮","count":0},{"name":"点炮","count":0}],"master":true},{"score":0,"chairid":1,"detail":[{"name":"自摸","count":0},{"name":"捉炮","count":0},{"name":"点炮","count":0}],"master":false}],"op":101,"progress":11}]}

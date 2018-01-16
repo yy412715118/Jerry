@@ -1,0 +1,13 @@
+package com.hogense.dao.util;
+
+public class OutArg {
+	public Object value=null;
+	public final int type;
+	public OutArg(int sqltype) {
+		this.type=sqltype;
+	}
+	@Override
+	public String toString() {
+		return value==null?null:value.toString();
+	}
+}

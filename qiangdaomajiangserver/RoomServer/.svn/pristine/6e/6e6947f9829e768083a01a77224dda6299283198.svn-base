@@ -1,0 +1,425 @@
+package com.lebin.server.netty.server;
+
+import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.log4j.Logger;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import com.hogense.server.define.Response;
+import com.hogense.server.define.Status;
+import com.lebin.game.module.IRoom;
+import com.lebin.game.module.data.Player;
+import com.lebin.game.module.data.Request;
+import com.lebin.server.annotation.MessageHandler;
+import com.lebin.server.annotation.Service;
+import com.lebin.server.net.util.RequestParser;
+import com.lebin.server.netty.Session;
+import com.lebin.server.netty.server.services.AccountService;
+import com.lebin.server.netty.serviceimpl.RoomManager;
+import com.lebin.server.util.ConfigInfo;
+import com.lebin.server.util.StringUtil;
+
+import atg.taglib.json.util.JSONObject;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.PongWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.WebSocketFrame;
+import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
+import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.util.CharsetUtil;
+
+
+/**
+ * WebSocket服务端Handler
+ *
+ */
+@Service
+public class RoomServerHandler extends SimpleChannelInboundHandler<Object> {
+	private static final Logger LOG = Logger.getLogger(RoomServerHandler.class.getName());
+	private WebSocketServerHandshaker handshaker;
+	private Session session;
+	private Player user;
+	private IRoom curRoom;
+	public static AtomicInteger usercount=new AtomicInteger(0);
+	private final Object lock=new Object();
+    public RoomServerHandler() {
+	}
+	@Override
+	public void messageReceived(ChannelHandlerContext ctx, Object msg) throws Exception {
+		if (msg instanceof FullHttpRequest) { // 传统的HTTP接入
+			handleHttpRequest(ctx, (FullHttpRequest) msg);
+		} else if (msg instanceof WebSocketFrame) { // WebSocket接入
+			handleWebSocketFrame(ctx, (WebSocketFrame) msg); 
+					}
+	}
+	/**
+	 * Http返回
+	 * @param ctx
+	 * @param request
+	 * @param response
+	 */
+	private static void sendHttpResponse(ChannelHandlerContext ctx, FullHttpRequest request, FullHttpResponse response) {
+		// 返回应答给客户端
+		if (response.getStatus().code() != 200) {
+			ByteBuf buf = Unpooled.copiedBuffer(response.getStatus().toString(), CharsetUtil.UTF_8);
+			response.content().writeBytes(buf);
+			buf.release();
+			HttpHeaders.setContentLength(response, response.content().readableBytes());
+		}
+		// 如果是非Keep-Alive，关闭连接
+		ChannelFuture f = ctx.channel().writeAndFlush(response);
+		if (!HttpHeaders.isKeepAlive(request) || response.getStatus().code() != 200) {
+			f.addListener(ChannelFutureListener.CLOSE);
+		}
+	}
+	/**
+	 * Http返回
+	 * @param ctx
+	 * @param request
+	 * @param response
+	 */
+	private static void sendHttpResponse(ChannelHandlerContext ctx, FullHttpRequest request, HttpResponseStatus status,String data) {
+		// 返回应答给客户端
+		DefaultFullHttpResponse response=new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status);
+		if (response.getStatus().code() != 200) {
+			ByteBuf buf = Unpooled.copiedBuffer(response.getStatus().toString(), CharsetUtil.UTF_8);
+			response.content().writeBytes(buf);
+			buf.release();
+			HttpHeaders.setContentLength(response, response.content().readableBytes());
+		}
+		else if(data!=null&&!data.isEmpty())
+		{
+			ByteBuf buf = Unpooled.copiedBuffer(data, CharsetUtil.UTF_8);
+			response.content().writeBytes(buf);
+			buf.release();
+			HttpHeaders.setContentLength(response, response.content().readableBytes());
+		}
+		// 如果是非Keep-Alive，关闭连接
+		ChannelFuture f = ctx.channel().writeAndFlush(response);
+		if (!HttpHeaders.isKeepAlive(request) || response.getStatus().code() != 200) {
+			f.addListener(ChannelFutureListener.CLOSE);
+		}
+	}
+	@Override
+	public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+		ctx.flush();
+	}
+
+	/**
+	 * 处理Http请求，完成WebSocket握手<br/>
+	 * 注意：WebSocket连接第一次请求使用的是Http
+	 * @param ctx
+	 * @param request
+	 * @throws Exception
+	 */
+	private void handleHttpRequest(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
+		
+		if (!request.getDecoderResult().isSuccess() || (!"websocket".equals(request.headers().get("Upgrade")))) {
+			doHttpRequest(ctx,request);
+			return;
+		}
+		// 正常WebSocket的Http连接请求，构造握手响应返回
+		List<Entry<String, String>>entries=request.headers().entries();
+		request.headers().remove("Sec-WebSocket-Protocol");
+	//	for(Entry<String, String>en:entries)
+		//	System.out.println(en.getKey()+" "+en.getValue());
+		WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory("ws://" + request.headers().get(HttpHeaders.Names.HOST), null, false);
+		handshaker = wsFactory.newHandshaker(request);
+		if (handshaker == null) { // 无法处理的websocket版本
+			WebSocketServerHandshakerFactory.sendUnsupportedWebSocketVersionResponse(ctx.channel());
+		} else { // 向客户端发送websocket握手,完成握手
+			session=new Session(ctx);
+			handshaker.handshake(ctx.channel(), request);
+			
+			System.out.println("send");
+			// 记录管道处理上下文，便于服务器推送数据到客户端
+			
+		
+		}
+	}
+	private void doHttpRequest(ChannelHandlerContext ctx, FullHttpRequest request)
+	{
+		String uri=request.getUri();
+		int index=uri.indexOf("?");
+		if(index!=-1)
+			uri=uri.substring(0, index);
+		if(uri.equals("/robot"))
+		{
+			InetSocketAddress insocket = (InetSocketAddress)ctx.channel().remoteAddress();
+			String ip = insocket.getAddress().getHostAddress();
+			if(RoomServer.configInfo.robotserviceips.contains(ip))
+			{
+				handleRobotRequest(ctx,request);
+				return;
+			}
+		}
+		sendHttpResponse(ctx, request, new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.BAD_REQUEST));
+	}
+	
+	/**
+	 * 处理Socket请求
+	 * @param ctx
+	 * @param frame
+	 * @throws Exception 
+	 */
+	private void handleWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
+		// 判断是否是关闭链路的指令
+		if (frame instanceof CloseWebSocketFrame) {
+			handshaker.close(ctx.channel(), (CloseWebSocketFrame) frame.retain());
+			return;
+		}
+		// 判断是否是Ping消息
+		if (frame instanceof PingWebSocketFrame) {
+			System.out.println("ping");
+			ctx.channel().write(new PongWebSocketFrame(frame.content().retain()));
+			return;
+		}
+		if(session==null)
+			return;
+		// 当前只支持文本消息，不支持二进制消息
+		if (!(frame instanceof TextWebSocketFrame)) {
+			throw new UnsupportedOperationException("当前只支持文本消息，不支持二进制消息");
+		}
+		String text=((TextWebSocketFrame)frame).text();
+		if("b".equals(text))
+		{
+			session.send("b");
+			return;
+		}
+		LOG.info(text);
+		// 处理来自客户端的WebSocket请求
+		Response response = new Response();
+		Request request;
+		try {
+			request = Request.create(text, Request.class);
+			response.setWhat(request.what);
+		} catch (Exception e) {
+			session.send(response.setWhat("-1").setStatus(Status.ARG_ERR).setData(new JsonObject()));
+			return;
+		}
+		try {
+			if(!MessageHandlerFactory.invokeIfExists(this, request.what, session,request,response))
+			{
+				session.send(response.setStatus(Status.ACCESS_DENY).setData(new JsonObject()));
+			}
+		} catch (JsonSyntaxException e1) {
+			LOG.warn("Json解析异常", e1);
+			session.send(response.setStatus(Status.ARG_ERR).setData(new JsonObject()));
+		} catch (Exception e2) {
+			LOG.error("处理Socket请求异常", e2);
+			session.send(response.setStatus(Status.ERROR).setData(new JsonObject()));
+		}
+	}
+	@Override
+	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+		if(user!=null)
+			System.out.println(user.uid);
+		if(IdleStateEvent.class.isAssignableFrom(evt.getClass()))
+		{
+			IdleStateEvent v=(IdleStateEvent)evt;
+			if(v.state()==IdleState.ALL_IDLE&&session!=null)
+			{
+				session.close();
+			}
+			return;
+		}
+		super.userEventTriggered(ctx, evt);
+	}
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+		LOG.error("WebSocket异常", cause);
+		if(session!=null)
+		{
+			session.close();
+		}
+	}
+
+	@Override
+	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+		// TODO Auto-generated method stub
+		super.handlerRemoved(ctx);
+		usercount.decrementAndGet();//人数减
+		LOG.info("hadler移除 ");
+		if(session!=null)
+		{
+			session.close();
+			LOG.debug("session关闭 "+session.isClosed());
+			session=null;
+		}
+	}
+	private int trytime=0;
+	@Override
+	public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+		// TODO Auto-generated method stub
+		super.handlerAdded(ctx);
+		usercount.incrementAndGet();//人数加
+		System.out.println("add");
+	}
+	@MessageHandler("enter")// 进入房间
+	public void enterroom(Session session,Request request,Response response) throws Exception
+	{
+		long uid=request.data.get("uid").getAsLong();
+		int gameid=request.data.get("gameid").getAsInt();
+		String accesstoken=request.data.get("token").getAsString();
+		long reqtime=Long.parseLong(request.data.get("reqtime").getAsString());
+		long d=System.currentTimeMillis()-reqtime;
+		if(Math.abs(d)>40000)
+		{
+			Map<String, Object>data=new HashMap<>();
+			data.put("time", System.currentTimeMillis());
+			response.data=data;
+			response.setStatus(Status.SIGN_TIMEOUT);
+			if(trytime<3)
+			{
+				trytime++;
+				response.what="reenter";
+			}
+			session.send(response);
+			return;
+		}
+		trytime=0;
+		user=AccountService.login(uid, accesstoken, gameid,reqtime);
+		System.out.println(user);
+		if(user==null)
+		{
+			response.setStatus(Status.TOKEN_TIMEOUT);
+			session.send(response);
+			return;
+		}
+		if(request.data.has("lat"))
+			user.lat=request.data.get("lat").getAsDouble();
+		if(request.data.has("lon"))
+			user.lon=request.data.get("lon").getAsDouble();
+		InetSocketAddress insocket = (InetSocketAddress) session.getChannelHandlerContext().channel()
+                .remoteAddress();
+		user.ip = insocket.getAddress().getHostAddress();
+		LOG.info(user.ip);
+		String serviceid=null;
+		if(request.data.has("serviceid"))
+		{
+			JsonElement element=request.data.get("serviceid");
+			if(!element.isJsonNull())
+				serviceid=element.getAsString();
+		}
+		int op=request.data.get("op").getAsInt();
+		synchronized (lock) {
+			if(op==1)
+				createRoom(request.data.get("type").getAsInt(), response,accesstoken,reqtime);
+			else 
+				joinroom(serviceid,session, request.data.get("roomid").getAsInt(), -1, response,accesstoken,reqtime);
+		}
+		session.send(response);
+	}
+	private boolean createRoom(int type,Response response,String token,long reqtime)
+	{
+		synchronized (lock) {
+			IRoom room=RoomManager.createRoom(session,user,token,type,response,reqtime);
+			if(room!=null)
+			{
+				curRoom=room;
+				return true;
+			}
+			return false;
+		}
+	}
+	public boolean joinroom(String serviceid,Session session,int roomid,int chairid,Response response,String token,long reqtime) throws Exception
+	{
+		synchronized(lock)
+		{
+			IRoom room=RoomManager.joinRoom(serviceid,user,token, session,roomid,chairid,response,reqtime);
+			if(room!=null)
+			{
+				curRoom=room;
+				return true;
+			}
+		}
+		return false;
+	}
+	@MessageHandler("1002")// 客户端发送消息到聊天群
+	public void sendMsg(Session session,Request request,Response response) throws Exception
+	{
+		
+	}
+	@MessageHandler("exitroom")// 退出房间
+	public void exitroom(Session session,Request request,Response response) throws Exception
+	{
+		synchronized (lock) {
+			boolean rs=RoomManager.exitRoom(user,curRoom, session, response);
+			if(rs)
+				curRoom=null;
+		}
+		System.out.println("exit"+response);
+		session.send(response);
+	}
+	@MessageHandler("gamemsg")// 游戏信息
+	public void gamemsg(Session session,Request request,Response response) throws Exception
+	{
+		if(curRoom==null)
+		{
+			session.send(response.setStatus(Status.FAIL.code).setMsg("你当前不在房间中"));
+			return;
+		}
+		curRoom.onMessage(request.data, user, session);
+	   
+	}
+	private void handleRobotRequest(ChannelHandlerContext ctx, FullHttpRequest request) {
+		
+		try {
+			Map<String, String>args=RequestParser.parse(request);
+			String op=args.get("op");
+			if("createroom".equals(op))
+				robotCreateRoom(args, ctx, request);
+			else if("roomstate".equals(op))
+				sendRoomState(args, ctx, request);
+			else 
+				throw new Exception("not found");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			sendHttpResponse(ctx, request, HttpResponseStatus.OK,"{\"status\":-1}");
+		}
+	}
+	private void robotCreateRoom(Map<String, String>args,ChannelHandlerContext ctx, FullHttpRequest request)throws Exception
+	{
+		String robotid=args.get("robotid");
+		int type=Integer.parseInt(args.get("type"));
+		String gid=args.get("gid");
+		long uid=Long.parseLong(args.get("uid"));
+		if(StringUtil.isNullOrEmpty(robotid,gid))
+			throw new Exception("缺少参数");
+		Response rsp=new Response();
+		RoomManager.autoCreateRoom(session, uid, type, gid, rsp);
+		sendHttpResponse(ctx, request, HttpResponseStatus.OK, rsp.toString());
+	}
+	private void sendRoomState(Map<String, String>args,ChannelHandlerContext ctx, FullHttpRequest request)throws Exception
+	{
+		String serviceid=args.get("serviceid");
+		int count=RoomManager.getRoomPlayerCount(serviceid);
+		JSONObject js=new JSONObject();
+		js.put("status", 200);
+		js.put("curplayercount", count);
+		sendHttpResponse(ctx, request, HttpResponseStatus.OK, js.toString());
+	}
+}

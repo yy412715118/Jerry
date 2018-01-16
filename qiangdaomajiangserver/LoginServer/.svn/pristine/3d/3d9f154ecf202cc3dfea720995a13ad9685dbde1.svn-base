@@ -1,0 +1,28 @@
+gameid=100000
+
+#accesstoken timeout ,unit second
+token_expirytime=60
+
+#user id start value
+uid_start=1000
+
+#room id start valie
+roomid_length=1
+
+#room auto free time ,unit minute
+room_freetime=1
+
+#robot create room count
+robot_create_room_count=1
+
+#center server host
+centerserver_host=http://192.168.1.115:8080
+
+guesthead=http://192.168.1.115/head/1.jpg
+allow_guest=1
+
+#test account
+ac1000001=123456
+ac1000002=123456
+ac1000003=123456
+ac1000004=123456

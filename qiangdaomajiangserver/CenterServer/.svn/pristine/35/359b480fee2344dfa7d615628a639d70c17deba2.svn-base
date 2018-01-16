@@ -1,0 +1,72 @@
+package com.hogense.util;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class ServerFilter {
+	private File file=new File("config/serverfiler.ini");
+	private static ServerFilter filter=new ServerFilter();
+	private Map<Integer, Integer>serverMapping=new ConcurrentHashMap<>();
+	private ServerFilter() {
+		load();
+	}
+	private void load()
+	{
+		if(file.exists())
+		{
+			FileInputStream fin=null;
+			try {
+				fin=new FileInputStream(file);
+				BufferedReader reader=new BufferedReader(new InputStreamReader(fin, "utf-8"));
+				String line;
+				while((line=reader.readLine())!=null)
+				{
+					line=line.trim();
+					if(line.isEmpty())
+						continue;
+					String str[]=line.split("=");
+					try {
+						Integer serverid=Integer.parseInt(str[0].trim());
+						Integer status=Integer.parseInt(str[1].trim());
+						serverMapping.put(serverid, status);
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
+				}
+				reader.close();
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			finally {
+				if(fin!=null)
+					try {
+						fin.close();
+					} catch (Exception e2) {
+						// TODO: handle exception
+					}
+			}
+			
+		}
+	}
+	private synchronized boolean save()
+	{
+		StringBuffer buffer=new StringBuffer();
+		for(Entry<Integer, Integer>en:serverMapping.entrySet())
+			buffer.append(en.getKey()+"="+en.getValue()+"\n");
+		try {
+			FileOutputStream fout=new FileOutputStream(file);
+			fout.write(buffer.toString().getBytes("utf-8"));
+			fout.close();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+}

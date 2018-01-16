@@ -1,0 +1,307 @@
+/*
+Navicat MySQL Data Transfer
+
+Source Server         : localhost
+Source Server Version : 50151
+Source Host           : localhost:3306
+Source Database       : db_account
+
+Target Server Type    : MYSQL
+Target Server Version : 50151
+File Encoding         : 65001
+
+Date: 2017-03-28 18:22:05
+*/
+
+SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for t_account
+-- ----------------------------
+DROP TABLE IF EXISTS `t_account`;
+CREATE TABLE `t_account` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `gameid` int(11) NOT NULL,
+  `uid` bigint(20) NOT NULL,
+  `account` bigint(20) NOT NULL DEFAULT '0' COMMENT '余额，通过RMB购买的虚拟货币，如砖石、房卡',
+  `createdate` date NOT NULL,
+  `createtime` datetime NOT NULL,
+  `accesstoken` varchar(32) NOT NULL,
+  `lastlogin` datetime NOT NULL,
+  `lastip` varchar(32) DEFAULT NULL,
+  `lockaccount` bigint(20) NOT NULL DEFAULT '0' COMMENT '锁定账户',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `gameid_uid` (`gameid`,`uid`),
+  KEY `createdate` (`createdate`),
+  KEY `ac_uid` (`uid`),
+  CONSTRAINT `ac_uid` FOREIGN KEY (`uid`) REFERENCES `t_user` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of t_account
+-- ----------------------------
+INSERT INTO `t_account` VALUES ('21', '100000', '1000003', '0', '2016-12-28', '2016-12-28 15:46:53', '5bc78b8c977b97cf01124a02409693ce', '2017-02-17 18:17:29', '192.168.1.164', '0');
+INSERT INTO `t_account` VALUES ('22', '100000', '1000002', '0', '2016-12-29', '2016-12-29 16:51:30', 'c6e6eb26e94e4b63539c72862feaa4ef', '2017-02-17 18:17:06', '192.168.1.110', '0');
+INSERT INTO `t_account` VALUES ('23', '100000', '1000001', '43', '2016-12-29', '2016-12-29 16:52:32', 'fd725736863f35df384315920503d10f', '2017-02-17 18:50:27', '192.168.1.200', '0');
+INSERT INTO `t_account` VALUES ('24', '100000', '1000004', '72', '2016-12-29', '2016-12-29 17:05:13', '0b294273731d96abfd2138d7cb43be31', '2017-02-17 18:31:08', '192.168.1.200', '0');
+INSERT INTO `t_account` VALUES ('25', '100000', '1000005', '12', '2016-12-29', '2016-12-29 17:05:43', '9ac0f8a411bd153fe386e208d4396caf', '2017-02-17 18:16:17', '192.168.1.128', '0');
+INSERT INTO `t_account` VALUES ('33', '100000', '1000006', '10', '2017-01-10', '2017-01-10 11:49:41', 'c4eca755add02c9e086bd3f5f9d88ca0', '2017-01-13 18:10:18', '192.168.1.110', '0');
+INSERT INTO `t_account` VALUES ('34', '100000', '1000007', '10', '2017-01-13', '2017-01-13 18:13:42', '99d917f0bcd5e5f7a987af64508c053b', '2017-01-13 18:13:42', '192.168.1.164', '0');
+INSERT INTO `t_account` VALUES ('35', '100000', '1000010', '11', '2017-02-13', '2017-02-13 09:43:49', 'bb28731cce4994873ce1e06053e02aa3', '2017-02-17 18:19:33', '192.168.1.110', '0');
+INSERT INTO `t_account` VALUES ('36', '100000', '1000008', '10', '2017-02-27', '2017-02-27 14:35:23', 'ea5ce973f3883366e8ee9aa2e61f72aa', '2017-02-27 14:38:45', '192.168.1.200', '0');
+INSERT INTO `t_account` VALUES ('37', '100000', '1000009', '10', '2017-02-27', '2017-02-27 14:37:38', '8808b87fe8cc0acefe00e9d3fcf27b5a', '2017-02-27 14:42:03', '192.168.1.200', '0');
+INSERT INTO `t_account` VALUES ('38', '100000', '1000011', '10', '2017-02-27', '2017-02-27 14:38:53', '582d8c78f8a8e9ee61c14f2fc2ec2d5b', '2017-02-27 14:38:53', '192.168.1.200', '0');
+INSERT INTO `t_account` VALUES ('39', '100000', '1000012', '10', '2017-02-27', '2017-02-27 14:39:01', '1481f6cc427e5e4247d4ddd9184f6abd', '2017-02-27 14:39:01', '192.168.1.200', '0');
+INSERT INTO `t_account` VALUES ('40', '100000', '1000013', '10', '2017-02-27', '2017-02-27 14:42:22', '047cc7b3839a4334b1f0e23980ae69fa', '2017-02-27 14:55:39', '192.168.1.200', '0');
+INSERT INTO `t_account` VALUES ('42', '100000', '1000015', '7', '2017-02-27', '2017-02-27 15:43:02', '8d8080c4a73278b4013233fe5160d09d', '2017-03-14 17:10:42', '192.168.1.110', '0');
+INSERT INTO `t_account` VALUES ('43', '100000', '1000016', '9', '2017-02-27', '2017-02-27 16:55:38', '5e66675bc4e0c749757f0daadbb9bf6e', '2017-02-28 09:41:23', '192.168.1.159', '0');
+INSERT INTO `t_account` VALUES ('44', '100000', '1000017', '10', '2017-02-27', '2017-02-27 16:57:21', '0541fd101b692f78a78f4e4b92518251', '2017-03-20 14:41:52', '192.168.1.164', '0');
+INSERT INTO `t_account` VALUES ('45', '100000', '1000018', '8', '2017-02-28', '2017-02-28 09:41:18', 'f9bc32bc4091bd5209b7bcb7b58eb17f', '2017-03-20 16:49:57', '192.168.1.128', '0');
+INSERT INTO `t_account` VALUES ('46', '100000', '1000019', '10', '2017-03-01', '2017-03-01 16:08:12', '60ef2c2b2e208f90976e01a4f8809469', '2017-03-01 16:08:12', '192.168.1.200', '0');
+INSERT INTO `t_account` VALUES ('47', '100000', '1000020', '10', '2017-03-01', '2017-03-01 16:08:32', 'b83e5056a27238007d033432dad4dc39', '2017-03-02 16:52:39', '192.168.1.200', '0');
+INSERT INTO `t_account` VALUES ('48', '100000', '1000021', '10', '2017-03-01', '2017-03-01 16:09:19', '12776471c4ebe75974054853dfd52fbb', '2017-03-02 16:50:26', '192.168.1.200', '0');
+INSERT INTO `t_account` VALUES ('49', '100000', '1000022', '10', '2017-03-02', '2017-03-02 14:33:25', '0ce95af436e6e59c5408493a2f438466', '2017-03-02 14:46:29', '192.168.1.115', '0');
+INSERT INTO `t_account` VALUES ('50', '100000', '1000023', '10', '2017-03-02', '2017-03-02 16:33:43', 'f434fcddd8ae2b569ddc6b88a13b6c8e', '2017-03-02 17:28:44', '192.168.1.200', '0');
+INSERT INTO `t_account` VALUES ('51', '100001', '1000046', '10', '2017-03-07', '2017-03-07 16:20:20', '33ed4bb6af65832150b0a8784f000e55', '2017-03-14 16:56:32', '192.168.1.112', '0');
+INSERT INTO `t_account` VALUES ('52', '100001', '1000015', '4', '2017-03-07', '2017-03-07 16:54:27', '8a9dd85f942a7dde8d4d67c5fea450fa', '2017-03-14 17:08:22', '192.168.1.110', '0');
+INSERT INTO `t_account` VALUES ('53', '100001', '1000017', '3', '2017-03-07', '2017-03-07 16:57:09', 'a9dc9a4c846f641c8d2eb475cdeebd63', '2017-03-14 10:48:13', '192.168.1.164', '0');
+INSERT INTO `t_account` VALUES ('54', '100001', '1000018', '1', '2017-03-07', '2017-03-07 16:59:12', 'a50a3f88474c39e2f56e2bcd8d813eb1', '2017-03-14 17:07:42', '192.168.1.128', '0');
+INSERT INTO `t_account` VALUES ('55', '100001', '1000047', '5', '2017-03-07', '2017-03-07 18:27:27', 'a10f6a2e752dddf17fcff8c88ff4ba3a', '2017-03-14 17:11:18', '192.168.1.164', '0');
+INSERT INTO `t_account` VALUES ('56', '100001', '1000048', '5', '2017-03-07', '2017-03-07 18:30:20', '049689f769bd882ab4dde46ce524063c', '2017-03-14 18:09:27', '192.168.1.110', '0');
+INSERT INTO `t_account` VALUES ('57', '100000', '1000046', '7', '2017-03-13', '2017-03-13 15:34:37', 'e7e042126b526c3912fbb4c607e7c42d', '2017-03-28 18:11:07', '192.168.1.112', '1');
+INSERT INTO `t_account` VALUES ('58', '100001', '1000049', '5', '2017-03-20', '2017-03-20 14:24:11', '48a368f0eb3b5e49d0ddbae482e4ca8b', '2017-03-20 14:53:29', '192.168.1.164', '0');
+INSERT INTO `t_account` VALUES ('59', '100000', '1000049', '10', '2017-03-20', '2017-03-20 15:05:41', '01fbb4653f606238ba2aba5db8d59fcb', '2017-03-20 17:16:13', '192.168.1.164', '0');
+INSERT INTO `t_account` VALUES ('60', '100000', '1000050', '10', '2017-03-20', '2017-03-20 15:09:04', '648a57d80a5ff9fc9232b630e920ebdb', '2017-03-20 19:08:39', '192.168.1.110', '0');
+
+-- ----------------------------
+-- Table structure for t_user
+-- ----------------------------
+DROP TABLE IF EXISTS `t_user`;
+CREATE TABLE `t_user` (
+  `uid` bigint(20) NOT NULL AUTO_INCREMENT,
+  `nickname` varchar(64) NOT NULL,
+  `head` varchar(256) NOT NULL,
+  `psw` varchar(32) NOT NULL,
+  `openid` varchar(64) NOT NULL,
+  `type` smallint(6) NOT NULL DEFAULT '1' COMMENT '0:注册用户 1:微信用户 2:QQ用户 3:微博用户',
+  `sex` smallint(1) NOT NULL DEFAULT '0' COMMENT '1:男  0:女',
+  PRIMARY KEY (`uid`),
+  UNIQUE KEY `openid_type` (`openid`,`type`)
+) ENGINE=InnoDB AUTO_INCREMENT=1000051 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of t_user
+-- ----------------------------
+INSERT INTO `t_user` VALUES ('1000001', 'x', 'http://192.168.1.115/head/1.jpg', 'e10adc3949ba59abbe56e057f20f883e', '1000001', '1', '1');
+INSERT INTO `t_user` VALUES ('1000002', '雨与鱼1', 'http://192.168.1.115/head/2.jpg', '8dc162a9e3c0057ef54cb2f099f0177b', '1000002', '1', '1');
+INSERT INTO `t_user` VALUES ('1000003', '雨与鱼', 'http://192.168.1.115/head/3.jpg', '948be87229bd1241aca9b7762fc0ebba', '1000003', '1', '1');
+INSERT INTO `t_user` VALUES ('1000004', 'cx', 'http://192.168.1.115/head/4.jpg', 'cc', '1000004', '1', '1');
+INSERT INTO `t_user` VALUES ('1000005', '麻将达人', 'http://192.168.1.115/head/5.jpg', 'cc', '1000005', '1', '1');
+INSERT INTO `t_user` VALUES ('1000006', 'N1', 'http://192.168.1.115/head/3.jpg', 'ce6444cace3147add405f934272b9521', '1000006', '1', '1');
+INSERT INTO `t_user` VALUES ('1000007', 'N0', 'http://192.168.1.115/head/2.jpg', '30a75f6365bc7546e77e2039c400864e', '1000007', '1', '1');
+INSERT INTO `t_user` VALUES ('1000008', 'N1', 'http://192.168.1.115/head/3.jpg', 'ed18c8f610321a6508f4655f06ad6bc2', '1000003', '0', '0');
+INSERT INTO `t_user` VALUES ('1000009', '雨与鱼', 'http://192.168.1.115/head/1.jpg', '2680ced68099f064e34fddca211da301', '1000001', '0', '0');
+INSERT INTO `t_user` VALUES ('1000010', 'Frainsh', 'http://wx.qlogo.cn/mmopen/jiavZVfVXXWTTCic66nKCmgoQYujMfJAic94UJKETmkYm4IlFSKUzUany1Rugia19NLG53A8Pic8PS5icwH1mRsiajib5cgzcVLbZKd0/0.jpg', '6327098852c006ef8918d4d347489c98', 'olwFQxGnNjxw5zuCB8hpldD1olR0', '1', '2');
+INSERT INTO `t_user` VALUES ('1000011', 'N2', 'http://192.168.1.115/head/4.jpg', 'c7d702512fe7dfb517db2cd223a1e29f', '1000004', '0', '0');
+INSERT INTO `t_user` VALUES ('1000012', 'N3', 'http://192.168.1.115/head/5.jpg', '00c35711fac1ce47aa6cd3cb6d0ecf09', '1000005', '0', '0');
+INSERT INTO `t_user` VALUES ('1000013', 'N0', 'http://192.168.1.115/head/2.jpg', 'f7e20eee6d950dbbf322837e614bf152', '1000002', '0', '0');
+INSERT INTO `t_user` VALUES ('1000015', '游客', 'http://192.168.1.115/head/1.jpg', '3a781d6621ed7fb8c103b03ca6fae2f1', 'hg_gst_352625062149560', '0', '1');
+INSERT INTO `t_user` VALUES ('1000016', '游客', 'http://192.168.1.115/head/1.jpg', 'ecb1d73748904462036178d9efaf86e4', 'hg_gst_27F15CF1-D09C-4902-B7B7-F88A9A6F3D73', '0', '1');
+INSERT INTO `t_user` VALUES ('1000017', '游客', 'http://192.168.1.115/head/1.jpg', '4e43c06ab2b5699b6a4e70c0953bc823', 'hg_gst_863784027236863', '0', '1');
+INSERT INTO `t_user` VALUES ('1000018', '游客', 'http://192.168.1.115/head/1.jpg', '1d8b04ce98ded9f2051977cccc4ad5ea', 'hg_gst_863388020499591', '0', '1');
+INSERT INTO `t_user` VALUES ('1000019', '雨与鱼', 'http://192.168.1.115/head/1.jpg', '51e1fba0220723eeb954cbfd2c214152', '1000001', '2', '0');
+INSERT INTO `t_user` VALUES ('1000020', 'N0', 'http://192.168.1.115/head/2.jpg', 'e10adc3949ba59abbe56e057f20f883e', '1000002', '2', '0');
+INSERT INTO `t_user` VALUES ('1000021', 'N1', 'http://192.168.1.115/head/3.jpg', 'e10adc3949ba59abbe56e057f20f883e', '1000003', '2', '0');
+INSERT INTO `t_user` VALUES ('1000022', '侯嵩?', 'http://wx.qlogo.cn/mmopen/jiavZVfVXXWTTCic66nKCmgoSZaA9vwiavAwfIZhsDv3qG0OCPlk1KbjCmFOTc4XpQ3elkuPRIlyqAOfrDQ6xGpoCHo9jicsUdad/0.jpg', '85ab815bc8664b8cfc2f03628980fd55', 'olwFQxDoxkbP4bPexN4M1IdcrODA', '1', '1');
+INSERT INTO `t_user` VALUES ('1000023', '白云', 'http://192.168.1.115/head/3.jpg', '4f5897142f7e533443e744b6fc36ed60', 'hg_gst_desk1000001', '0', '1');
+INSERT INTO `t_user` VALUES ('1000046', '萌萌1号', 'http://192.168.1.115/head/2.jpg', '0', 'hg_gst_desk1000002', '0', '2');
+INSERT INTO `t_user` VALUES ('1000047', '我的名字', '', '0', 'op28W1TFOimd0-0cm8PhLVTNrtBc', '1', '0');
+INSERT INTO `t_user` VALUES ('1000048', 'Testing', 'http://wx.qlogo.cn/mmopen/HJ90gNFricNibc8KbesRpETaeeukLXhAK0n6M0PskB7dMtZicib9cda2thSSHQbUKwofyziayrEheI9WV8PvpUoDpkQwQfYFyqGoB/0.jpg', '0', 'op28W1Smx7qmiGQQwh466RLGai1g', '1', '0');
+INSERT INTO `t_user` VALUES ('1000049', '我的名字', '', '0', 'olwFQxBDHn5p96Y8wnYUNpSoV72k', '1', '0');
+INSERT INTO `t_user` VALUES ('1000050', 'Testing', 'http://wx.qlogo.cn/mmopen/QT6y4hLYqU6Zq8nyFianhjTZOEEylL5Al8bSsAevJPRpYGKOnHw8S18CvtOqZ6uibgPLEndYibenMpvJ9zhUEfP0ibhxMxicrLH41/0.jpg', '0', 'olwFQxB8dmTn4gIqQN-0TIHTK8PE', '1', '0');
+
+-- ----------------------------
+-- Procedure structure for pro_create_uid
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `pro_create_uid`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `pro_create_uid`(OUT _uid BIGINT(20))
+BEGIN
+	DECLARE _id BIGINT ;
+	INSERT INTO t_uidcreator() VALUES();
+  SELECT LAST_INSERT_ID() INTO _id;
+	DELETE FROM t_uidcreator WHERE id=_id;
+	SELECT 1000000+_id INTO _uid;
+END
+;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for pro_login_openid
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `pro_login_openid`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `pro_login_openid`(IN _openid VARCHAR(64),
+IN _nickname VARCHAR(64),
+IN _head VARCHAR(256),
+IN _type INT(2),
+IN _gameid VARCHAR(32),
+IN _ip VARCHAR(15),
+IN _token VARCHAR(32),
+IN _deviceid VARCHAR(32),
+IN _sex INT(11))
+lb:BEGIN
+-- 用户id
+DECLARE _uid BIGINT; 
+-- 账户id
+DECLARE _accountid BIGINT;
+-- 登录id
+DECLARE _loginid BIGINT;
+
+-- 游戏名称
+DECLARE _gamename VARCHAR(32);
+DECLARE _dfaccount BIGINT; -- 新用户账号余额
+DECLARE _status INT(11); 	-- 处理结果 
+DECLARE _msg VARCHAR(32);  -- 返回信息 
+DECLARE error_code INT DEFAULT 0; 	 
+		SELECT gamename,dfaccount INTO _gamename,_dfaccount FROM db_game.t_game WHERE t_game.gameid=_gameid;
+		IF _gamename IS NULL THEN
+			SELECT 600 `status`,'游戏不存在' msg;
+			LEAVE lb;
+		END IF;
+		SELECT uid INTO _uid FROM t_user WHERE openid=_openid and type=_type;
+-- 用户不存在，创建新用户
+		IF _uid IS NULL THEN 
+			-- 创建uid
+			SET error_code=0;
+	
+			BEGIN
+				
+			
+					-- 插入新用户
+					INSERT INTO t_user(nickname,head,openid,psw,type,sex) VALUES(_nickname,_head,_openid,'0',_type,_sex);
+					SELECT LAST_INSERT_ID() INTO _uid;
+					-- 创建新用户账户
+					INSERT INTO t_account(gameid,uid,account,createdate,createtime,accesstoken,lastlogin,lastip)  
+						VALUES(_gameid,_uid,_dfaccount,CURDATE(),NOW(),_token,NOW(),_ip);
+				
+			END;
+    ELSE
+      UPDATE t_user SET nickname=_nickname,head=_head,sex=_sex WHERE uid=_uid;
+		END IF;
+		SELECT id INTO _accountid FROM t_account WHERE gameid=_gameid and uid=_uid;
+		-- 账户为空，创建新账户
+		IF _accountid IS NULL THEN 
+			
+					
+					INSERT INTO t_account(gameid,uid,account,createdate,createtime,accesstoken,lastlogin,lastip)  
+							VALUES(_gameid,_uid,_dfaccount,CURDATE(),NOW(),_token,NOW(),_ip);
+				
+		ELSE 
+				-- 更新登录信息
+				UPDATE t_account SET lastlogin=NOW(),lastip=_ip,accesstoken=_token WHERE id=_accountid;
+		END IF;
+		
+		-- 记录登录日志
+		INSERT INTO db_log.t_loginlog(createdate,gamename,gameid,uid,nickname,head,ip,deviceid,logintime,lastvisit)
+			VALUES(CURDATE(),_gamename,_gameid,_uid,_nickname,_head,_ip,_deviceid,NOW(),NOW());
+		SELECT LAST_INSERT_ID() INTO _loginid;
+		SELECT 200 `status`,'成功' msg,_loginid loginid,t_user.uid,nickname,head,account,accesstoken,sex,lastip ip from t_user 
+			LEFT JOIN t_account on t_account.gameid=_gameid and t_account.uid=_uid WHERE t_user.uid=_uid;
+END
+;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for pro_recharge
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `pro_recharge`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `pro_recharge`(IN _gameid INT(11),IN _fromagent BIGINT(20),IN _touid BIGINT(20),IN _amount INT(11))
+lb:BEGIN
+DECLARE _error INT;
+	IF _amount<=0 THEN
+		SELECT -1 `status`,'充值数量错误！' msg;
+		LEAVE lb;
+	END IF;
+	 
+	IF _fromagent IS NULL OR _fromagent<0 THEN
+		SELECT -1 `status`,'代理商id错误！' msg;
+		LEAVE lb;
+	END IF;
+	IF NOT EXISTS (SELECT uid FROM t_account WHERE gameid=_gameid AND uid=_touid) THEN
+		SELECT -1 `status`,CONCAT('账号',_touid,'不存在！') msg;
+		LEAVE lb;
+	END IF;
+	
+  START TRANSACTION;
+	UPDATE t_account SET account=account+_amount WHERE gameid=_gameid AND uid=_touid;
+	IF ROW_COUNT()=0 THEN
+		SELECT -1 `status`,CONCAT('充值失败！') msg;
+		ROLLBACK;
+		LEAVE lb;
+	END IF;
+	COMMIT;
+	BEGIN
+
+  INSERT INTO db_log.t_accountlog(createdate,gameid,uid,createtime,op,account,lockaccount,opvalue,msg,refuid)
+			SELECT CURDATE(),gameid,uid,NOW(),4,account,lockaccount,_amount,CONCAT(_fromagent,'充值'),_fromagent FROM
+			t_account WHERE gameid=_gameid AND uid=_touid;
+	END;
+	SELECT 200 `status`,'充值成功！' msg;
+END
+;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for pro_transfer
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `pro_transfer`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `pro_transfer`(IN _gameid INT(11),IN _fromuid BIGINT(20),IN _touid BIGINT(20),IN _amount INT(11))
+lb:BEGIN
+DECLARE _error INT;
+	IF _amount<=0 THEN
+		SELECT -1 `status`,'转账数量错误！' msg;
+		LEAVE lb;
+	END IF;
+	IF _fromuid=_touid THEN
+		SELECT -1 `status`,'不能给自己转账！' msg;
+		LEAVE lb;
+	END IF;
+  IF NOT EXISTS (SELECT uid FROM t_account WHERE gameid=_gameid AND uid=_fromuid) THEN
+		SELECT -1 `status`,CONCAT('账号',_fromuid,'不存在！') msg;
+		LEAVE lb;
+  END IF;
+	IF NOT EXISTS (SELECT uid FROM t_account WHERE gameid=_gameid AND uid=_touid) THEN
+		SELECT -1 `status`,CONCAT('账号',_touid,'不存在！') msg;
+		LEAVE lb;
+	END IF;
+	
+  START TRANSACTION;
+	UPDATE t_account SET account=account-_amount WHERE gameid=_gameid AND uid=_fromuid AND account-lockaccount>=_amount;
+	IF ROW_COUNT()=0 THEN
+		SELECT -1 `status`,CONCAT('账号余额不足！') msg;
+		ROLLBACK;
+		LEAVE lb;
+	END IF;
+	UPDATE t_account SET account=account+_amount WHERE gameid=_gameid AND uid=_touid;
+	IF ROW_COUNT()=0 THEN
+		SELECT -1 `status`,CONCAT('转账失败！') msg;
+		ROLLBACK;
+		LEAVE lb;
+	END IF;
+	COMMIT;
+	BEGIN
+	DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET _error=1;
+	INSERT INTO db_log.t_accountlog(createdate,gameid,uid,createtime,op,account,lockaccount,opvalue,msg,refuid)
+			SELECT CURDATE(),gameid,uid,NOW(),6,account,lockaccount,_amount,CONCAT('转账给',_touid),_touid FROM
+			t_account WHERE gameid=_gameid AND uid=_fromuid;
+  INSERT INTO db_log.t_accountlog(createdate,gameid,uid,createtime,op,account,lockaccount,opvalue,msg,refuid)
+			SELECT CURDATE(),gameid,uid,NOW(),7,account,lockaccount,_amount,CONCAT(_fromuid,'转入'),_fromuid FROM
+			t_account WHERE gameid=_gameid AND uid=_touid;
+	END;
+	SELECT 200 `status`,'转账成功！' msg;
+END
+;;
+DELIMITER ;

@@ -1,0 +1,17 @@
+{
+"date":"2017-12-06 10:01:51",
+"roominfo":{"gamestate":1,"rulename":"1圈4局","ruleid":1,"serviceid":"619a59f4da2911e783b9dff736292a5a","mastername":"蓝胖","roomid":185807,"master":1007990},
+"player":[{"uid":1007990,"nickname":"蓝胖","head":"http://192.168.1.115/head/3.jpg","ip":"192.168.1.122","ipold":"192.168.1.122","lat":36.104483,"lon":120.357172,"chairid":0,"state":1,"score":0,"playstate":0,"sex":1},{"uid":1007995,"nickname":"萌萌1号","head":"http://192.168.1.115/head/4.jpg","ip":"192.168.1.194","ipold":"192.168.1.194","chairid":1,"state":1,"score":0,"playstate":0,"sex":1},{"uid":1007988,"nickname":"天天","head":"http://192.168.1.115/head/3.jpg","ip":"192.168.1.125","ipold":"192.168.1.125","chairid":2,"state":1,"score":0,"playstate":0,"sex":1},{"uid":1007992,"nickname":"乐鲂","head":"http://192.168.1.115/head/2.jpg","ip":"192.168.1.125","ipold":"192.168.1.125","chairid":3,"state":1,"score":0,"playstate":0,"sex":2}],
+"roundinfo":{"dianshu1":4,"dianshu2":1,"zhuangjiachairid":0,"startchairid":0,"startpos":5,"frontremove":52,"tailremove":0,"leftcount":60,"curchairid":-1,"curoutcard":-1,"lefttime":0,"curaction":1,"curround":1,"curcircle":1,"difen":1,"lianzhuang":0,"huangzhuang":0,"des":"第1圈(1/4) 第1局"},
+"carddata":[{"norcard":[48,91,40,111,71,99,70,79,73,98,85,89,32],"out":[],"weavecard":[],"ops":[],"lastout":-1},{"norcard":[47,51,77,42,23,87,72,74,105,110,18,44,1],"out":[],"weavecard":[],"ops":[],"lastout":-1},{"norcard":[82,55,10,97,16,15,17,35,60,106,29,57,59],"out":[],"weavecard":[],"ops":[],"lastout":-1},{"norcard":[107,101,33,43,45,84,34,5,76,8,6,63,13],"out":[],"weavecard":[],"ops":[],"lastout":-1}],
+"actions":[
+{"op":1,"leftcount":45,"frontremove":53,"cardid":53,"tailremove":0,"progress":3,"chairid":0,"lefttime":15,"opts":{"0":[],"1":[],"2":[],"3":[]}},
+{"op":2,"cardid":32,"progress":4,"chairid":0,"opts":{"0":[],"1":[],"2":[],"3":[{"op":3,"item":[{"id":0,"info":[33,34,32],"rm":[33,34],"type":0}]}]}},
+{"op":4,"select":{"3":3},"progress":4},
+{"op":2,"cardid":63,"progress":6,"chairid":3,"opts":{"0":[],"1":[],"2":[],"3":[]}},
+{"op":1,"leftcount":44,"frontremove":54,"cardid":21,"tailremove":0,"progress":7,"chairid":0,"lefttime":15,"opts":{"0":[],"1":[],"2":[],"3":[]}},
+{"op":5,"progress":8,"chairid":1,"vote":{"vote":[0,1,0,0],"result":[1,0,0,0],"state":0,"lefttime":179}},
+{"op":5,"progress":9,"chairid":0,"vote":{"vote":[1,1,0,0],"result":[1,1,0,0],"state":0,"lefttime":178}},
+{"op":5,"progress":10,"chairid":2,"vote":{"vote":[1,1,1,0],"result":[1,1,1,0],"state":1,"lefttime":175}},
+{"result":{"detail":[{"score":0,"totalscore":0,"chairid":0,"card":[40,48,53,70,71,73,79,85,89,91,98,99,111,-1]},{"score":0,"totalscore":0,"chairid":1,"card":[1,18,23,42,44,47,51,72,74,77,87,105,110,-1]},{"score":0,"totalscore":0,"chairid":2,"card":[10,15,16,17,29,35,55,57,59,60,82,97,106,-1]},{"score":0,"totalscore":0,"chairid":3,"card":[5,6,8,13,43,45,76,84,101,107,-8,32,33,34,-1]}],"winstate":[2,2,2,2]},"op":100,"progress":12,"wininfo":{"winner":[],"lose":-1,"type":0}},
+{"result":[{"score":0,"chairid":0,"detail":[{"name":"自摸","count":0},{"name":"捉炮","count":0},{"name":"点炮","count":0}],"master":true},{"score":0,"chairid":1,"detail":[{"name":"自摸","count":0},{"name":"捉炮","count":0},{"name":"点炮","count":0}],"master":false},{"score":0,"chairid":2,"detail":[{"name":"自摸","count":0},{"name":"捉炮","count":0},{"name":"点炮","count":0}],"master":false},{"score":0,"chairid":3,"detail":[{"name":"自摸","count":0},{"name":"捉炮","count":0},{"name":"点炮","count":0}],"master":false}],"op":101,"progress":12}]}

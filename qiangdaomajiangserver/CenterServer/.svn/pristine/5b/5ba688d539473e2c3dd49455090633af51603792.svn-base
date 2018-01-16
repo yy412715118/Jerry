@@ -1,0 +1,24 @@
+#accesstoken timeout ,unit second
+token_expirytime=60
+
+#user id start value
+uid_start=1000
+
+#room id start valie
+roomid_length=1
+
+#room auto free time ,unit minute
+room_freetime=1
+
+#robot create room count
+robot_create_room_count=1
+
+#\u623F\u95F4\u670D\u52A1\u5668\u8D85\u65F6\u65F6\u95F4
+servertimeout=60000
+
+#\u623F\u95F4\u670D\u52A1\u8D85\u65F6\u79FB\u51FA\u65F6\u95F4
+servertimeouttoremove=12000
+
+#psw myqwemnb413
+
+recordpath=D:/gamerecord

@@ -1,0 +1,382 @@
+package com.lebin.server.netty.serviceimpl;
+
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Random;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.log4j.Logger;
+
+import com.google.gson.JsonObject;
+import com.hogense.server.define.Response;
+import com.hogense.server.define.Status;
+import com.lebin.game.module.IAccount;
+import com.lebin.game.module.IDaoService;
+import com.lebin.game.module.IRecorder;
+import com.lebin.game.module.IRoom;
+import com.lebin.game.module.IRoomManager;
+import com.lebin.game.module.ISession;
+import com.lebin.game.module.data.Player;
+import com.lebin.game.utils.LocalRecorder;
+import com.lebin.game.utils.RemoteRecorder;
+import com.lebin.server.netty.server.services.RoomService;
+import com.lebin.server.util.ConfigInfo;
+import com.lebin.server.util.StringUtil;
+
+import atg.taglib.json.util.JSONObject;
+import io.netty.util.internal.ConcurrentSet;
+
+public class RoomManager{
+	private static final Logger LOG = Logger.getLogger(RoomManager.class);
+	public static final Map<Integer, IRoom> ROOMS = new ConcurrentHashMap<Integer, IRoom>(); // <roomid, room>
+	public static final Set<Long>USER_LOCK=new ConcurrentSet<Long>();//用户锁
+	private static RoomService roomService=new RoomService();
+	private static boolean flag=false;
+	private static ConfigInfo configInfo;
+	private static BitSet ROOMIDSET;
+	private static IRecorder recorder;
+	private static Class<?>I_ROOMCLASS;
+	private static IRoomManager ROOM_MNG=new IRoomManager() {
+
+		@Override
+		public boolean free(IRoom room, int freetype) {
+			int roomid=room.getRoomid();
+			JSONObject rs=roomService.freeRoom(roomid,freetype);
+			LOG.info(rs);
+			try {
+				if(rs==null||rs.getInt("status")!=200)
+					return false;
+				ROOMS.remove(roomid);
+				LOG.info("房间"+roomid+",已解散");
+				returnRoomId(roomid);
+				return true;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return false;
+		}
+		
+		@Override
+		public IDaoService getDaoService() {
+			// TODO Auto-generated method stub
+			return roomService;
+		}
+		public IAccount payRoom(IRoom room) {
+			int roomid=room.getRoomid();
+			JSONObject rs=roomService.payRoom(roomid,room.getServiceId());
+			LOG.info(rs);
+			try {
+				if(rs==null||rs.getInt("status")!=200)
+					return null;
+				ROOMS.remove(room);
+				LOG.info("房间"+roomid+",已结算");
+				IAccount account=new IAccount();
+				account.uid=rs.getLong("uid");
+				account.account=rs.getLong("account");
+				return account;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		};
+		
+	};
+	/*
+	 * 释放无效房间
+	 */
+	public static synchronized void init(ConfigInfo info,Class<?>room_class)
+	{
+		if(flag)
+			return;
+		configInfo=info;
+		I_ROOMCLASS=room_class;
+		recorder=info.isremoterecord?new RemoteRecorder(info.uploadrecordurl):new LocalRecorder(info.maxopenfile,info.recordpath);
+		recorder.start();
+		ROOMIDSET=new BitSet(info.maxroomcount);
+		flag=true;
+		LOG.info("解散因程序退出不能结束的房间");
+		roomService.freeRooms(configInfo.serverid);
+		m_timer.schedule(checkRoomTask, 60000,60000);
+	}
+	public static int getRoomCount()
+	{
+		return ROOMS.size();
+	}
+	static Random rand = new Random();
+	private static synchronized Integer newRoomId()
+	{
+		int n = configInfo.maxroomcount;
+		int[] buf=new int[n];
+        boolean[] bool = new boolean[n];
+        int num =0;
+        for (int i = 0; i<n; i++){
+            do{
+                //如果产生的数相同继续循环
+                num = rand.nextInt(n);    
+            }while(bool[num]);
+            bool[num] =true;
+            buf[i]=num;
+        }
+		for(int i:buf)
+		{
+			if(ROOMIDSET.get(i))
+				continue;
+			ROOMIDSET.set(i);
+			return configInfo.start_roomid+i;
+		}
+		return null;
+	}
+	private static synchronized void returnRoomId(int roomid)
+	{
+		int p=roomid-configInfo.start_roomid;
+		if(p<0||p>=configInfo.maxroomcount)
+			return;
+		ROOMIDSET.set(p,false);
+	}
+	public static IRoom createRoom(ISession session,Player user,String token,int gameid,int type,Response rsp,long reqtime) {
+		
+		try {
+			synchronized (USER_LOCK) {
+				if(USER_LOCK.contains(user.uid))
+				{
+					rsp.setStatus(Status.FAIL.code).setMsg("您有请求正在处理中，请稍后再试！");
+					return null;
+				}
+				USER_LOCK.add(user.uid);//用户加锁
+			}
+			Integer roomid=newRoomId();
+			if(roomid==null)
+			{
+				rsp.setStatus(Status.NOT_INROOM);
+				return null;
+			}
+			boolean flag=false;
+			try {
+				JSONObject rs=roomService.createRoom(roomid, token,reqtime, gameid, user.uid, null, type, configInfo.host,configInfo.port, configInfo.serverid);
+				if(rs==null)
+				{
+					rsp.setStatus(Status.CREATE_ROOM_FAIL);
+					return null;
+				}
+				System.out.println(rs);
+				int status=rs.getInt("status");
+				if(status!=200)
+				{
+					if(status==666)//房间号已被使用
+					{
+						flag=true;//不返还房间号
+					}
+					JsonObject object=new JsonObject();
+					if(rs.has("roomid"))
+						object.addProperty("roomid", rs.getInt("roomid"));
+					if(rs.has("account"))
+						object.addProperty("account", rs.getLong("account"));
+					rsp.setStatus(rs.getInt("status")).setMsg(rs.getString("msg")).setData(object);
+					return null;
+				}
+				
+				IRoom room=(IRoom)I_ROOMCLASS.newInstance();
+				room.init(rs.toString());
+				JSONObject joinstate=roomService.joinRoom(room.getRoomid(), token,reqtime, gameid, user.uid);
+				if(joinstate==null||joinstate.getInt("status")!=200)//无法加入房间
+				{
+					roomService.freeJoinFailRoom(room.getRoomid());
+					rsp.setStatus(Status.JOIN_ROOMFAIL);
+					return null;
+				}
+				room.onCreate(ROOM_MNG,recorder);
+				int chairid=room.joinRoom(-1, user, session);
+				ROOMS.put(room.getRoomid(), room);
+				Map<String, Object> data=new HashMap<>();
+				data.put("ismaster", user.getId().equals(room.getMasterId()));
+				data.put("roomid", room.getRoomid());
+				data.put("roominfo", room.getRoomInfo());
+				user.chairid=chairid;
+				data.put("user", user);
+				if(rs.has("account"))
+					data.put("account", rs.getLong("account"));
+				rsp.setStatus(Status.OK).setData(data);
+				flag=true;
+				return room;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			finally {
+				if(!flag)
+				{
+					LOG.info("创建房间失败，释放房间id："+roomid);
+					returnRoomId(roomid);
+				}
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			USER_LOCK.remove(user.uid);//用户解锁
+		}
+		 rsp.setStatus(Status.FAIL);
+		 return null;
+	}
+	public static IRoom joinRoom(String serviceid,Player user,String token,int gameid, ISession session,int roomid,int chairid,Response rsp,long reqtime) {
+		try {
+			synchronized (USER_LOCK) {
+				if(USER_LOCK.contains(user.uid))
+				{
+					rsp.setStatus(Status.FAIL.code).setMsg("您有请求正在处理中，请稍后再试！");
+					return null;
+				}
+				USER_LOCK.add(user.uid);//用户加锁
+			}
+			IRoom room=ROOMS.get(roomid);
+			if(room==null)
+			{
+				//房间不存在
+				rsp.setStatus(Status.ROOM_NOTFOUND);
+				roomService.exitRoom(user.uid,roomid,configInfo.gameid);
+				return null;
+			}
+			if(!StringUtil.isNullOrEmpty(serviceid))
+			{
+				if(!serviceid.equals(room.getServiceId()))
+				{
+					//房间不存在
+					rsp.setStatus(Status.ROOM_NOTFOUND);
+					roomService.exitRoom(user.uid,roomid,configInfo.gameid);
+					return null;
+				}
+			}
+			JSONObject rs=roomService.joinRoom(roomid, token, reqtime,gameid, user.uid);
+			if(rs==null)
+			{
+				rsp.setStatus(Status.ROOM_NOTFOUND);
+				return null;
+			}
+			int status=rs.getInt("status");
+			if(status!=200)
+			{
+				if(status==606)//房间不存在或者已经解散
+				{
+					ROOMS.remove(roomid);
+					returnRoomId(roomid);
+				}
+				JsonObject object=new JsonObject();
+				if(rs.has("roomid"))
+					object.addProperty("roomid", rs.getInt("roomid"));;
+				rsp.setStatus(rs.getInt("status")).setMsg(rs.getString("msg")).setData(object);
+				return null;
+			}
+			chairid=room.joinRoom(chairid>-1?chairid:-1, user, session);
+			if(chairid>-1)
+			{
+				Map<String, Object> data=new HashMap<>();
+				data.put("ismaster", user.getId().equals(room.getMasterId()));
+				data.put("roomid", room.getRoomid());
+				data.put("roominfo", room.getRoomInfo());
+				user.chairid=chairid;
+				data.put("user", user);
+				rsp.setStatus(Status.OK).setData(data);
+				return room;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			USER_LOCK.remove(user.uid);//用户解锁
+		}
+		 rsp.setStatus(Status.JOIN_ROOMFAIL);
+		 return null;
+	}
+	public static boolean exitRoom(Player user,IRoom room,ISession session,Response rsp) {
+		try {
+			synchronized (USER_LOCK) {
+				if(USER_LOCK.contains(user.uid))
+				{
+					rsp.setStatus(Status.FAIL.code).setMsg("您有请求正在处理中，请稍后再试！");
+					return false;
+				}
+				USER_LOCK.add(user.uid);//用户加锁
+			}
+			if(room==null)
+			{
+				rsp.setStatus(Status.ROOM_NOTFOUND);
+				return false;
+			}
+			if(room.exitRoom(user, session))
+			{
+				roomService.exitRoom(user.uid,room.getRoomid(),configInfo.gameid);
+				rsp.setStatus(Status.OK);
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+			USER_LOCK.remove(user.uid);//用户解锁
+		}
+		 rsp.setStatus(Status.FAIL);
+		 return false;
+	}
+	public static boolean destoryRoom(Integer roomid) {
+		if ( !ROOMS.containsKey(roomid)) {
+			return false;
+		}
+		ROOMS.remove(roomid);
+		return true;
+	}
+	static Timer m_timer=new Timer();
+	static TimerTask checkRoomTask=new TimerTask() {
+		
+		@Override
+		public void run() {
+		//	LOG.info("检查长时间不活动房间。。。");
+			List<Integer>freelist=new ArrayList<>();
+			synchronized (ROOMS) {
+				for(Entry<Integer, IRoom>en:ROOMS.entrySet())
+				{
+					IRoom room=en.getValue();
+					if(room==null||!room.isActive())
+						freelist.add(en.getKey());
+				}
+			}
+			for(Integer rmid:freelist)
+			{
+				if(roomService.freeRoom(rmid, 3)!=null)
+				{
+					ROOMS.remove(rmid);
+					returnRoomId(rmid);
+					LOG.info("房间："+rmid+"长时间不活动，自动释放房间");
+				}
+				else 
+				{
+					LOG.error("房间："+rmid+"长时间不活动，释放失败");
+				}
+			}
+		}
+	};
+	
+	/**
+	 * 通知所有机器有机器下线
+	 * @param requestId
+	 *//*
+	public static void notifyDownline(String requestId) {
+		RoomService.bananaWatchMap.forEach((reqId, callBack) -> { // 通知有人下线
+			Request serviceRequest = new Request();
+		//	serviceRequest.setServiceId(CODE.downline.code);
+			//serviceRequest.setRequestId(requestId);
+			try {
+				callBack.send(serviceRequest);
+			} catch (Exception e) {
+				LOG.warn("回调发送消息给客户端异常", e);
+			}
+		});
+	}*/
+	
+}

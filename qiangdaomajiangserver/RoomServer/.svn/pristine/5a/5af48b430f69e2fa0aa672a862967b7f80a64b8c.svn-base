@@ -1,0 +1,65 @@
+package com.hogense.dao.util;
+
+import java.io.Console;
+import java.sql.SQLException;
+
+import org.apache.commons.dbcp.DataSourceConnectionFactory;
+
+import com.alibaba.druid.pool.DruidDataSource;
+import com.lebin.server.util.Config;
+
+public class DataSourceManager {
+	static DataSourceManager manager;
+	static final Object lock=new Object();
+	private DataSourceConnectionFactory factory;
+	private DataSourceManager() {
+	/*	BasicDataSource dataSource=new BasicDataSource();
+		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+		dataSource.setUrl("jdbc:mysql://localhost/db_account?characterEncoding=utf-8");
+		dataSource.setUsername("root");
+		dataSource.setPassword("my123456");
+		dataSource.setInitialSize(10);
+		dataSource.setMaxIdle(100);
+		dataSource.setMaxWait(2000);
+		dataSource.setTestWhileIdle(true);*/
+		DruidDataSource dataSource = new DruidDataSource();
+		dataSource.setDriverClassName(Config.getProperty("db_driver"));
+		dataSource.setUsername(Config.getProperty("db_username"));
+		dataSource.setPassword(Config.getProperty("db_psw")); 
+		dataSource.setUrl(Config.getProperty("db_url")); 
+		dataSource.setInitialSize(Config.getInt("db_initialSize", 10));
+		dataSource.setMinIdle(Config.getInt("db_minIdle", 0));
+		dataSource.setMaxWait(Config.getLong("db_maxWait", 6000));
+		dataSource.setMaxActive(Config.getInt("db_maxActive", 100));
+		dataSource.setValidationQuery(Config.getProperty("db_validationQuery", "SELECT 1"));
+		dataSource.setTestOnBorrow(Boolean.parseBoolean(Config.getProperty("db_testOnBorrow", "false")));
+		dataSource.setTestOnReturn(Boolean.parseBoolean(Config.getProperty("db_testOnReturn", "false")));
+		dataSource.setTestWhileIdle(Boolean.parseBoolean(Config.getProperty("db_testWhileIdle", "true")));
+		dataSource.setMinEvictableIdleTimeMillis(Config.getLong("db_minEvictableIdleTimeMillis",25200000));
+		dataSource.setTimeBetweenEvictionRunsMillis(Config.getLong("db_timeBetweenEvictionRunsMillis",60000));
+		dataSource.setRemoveAbandoned(Boolean.parseBoolean(Config.getProperty("db_removeAbandoned","true")));
+		dataSource.setRemoveAbandonedTimeout(Config.getInt("db_removeAbandonedTimeoutMillis",1800));
+		dataSource.setLogAbandoned(Boolean.parseBoolean(Config.getProperty("db_logAbandoned","true")));
+		// 启用监控统计功能 
+		try {
+			dataSource.setFilters(Config.getProperty("db_filters","mergeStat"));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}// for mysql 
+		dataSource.setPoolPreparedStatements(false); 
+		factory=new DataSourceConnectionFactory(dataSource);
+	}
+	public static DataSourceManager getManager() {
+		synchronized (lock) {
+			if(manager==null)
+				manager=new DataSourceManager();
+			return manager;
+		}
+	}
+	public DataSourceConnectionFactory getDataSourceConnectionFactory()
+	{
+		return factory;
+	}
+	
+}

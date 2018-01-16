@@ -1,0 +1,15 @@
+package com.lebin.game.module;
+
+import java.util.List;
+import java.util.Map;
+
+public interface IDaoService {
+	public List<Object>findBySql(String sql,Object...args);
+	public Object findUniqueBySql(String sql,Object...args);
+	public List<Map<String, Object>> findMapBySql(String sql,Object...args);
+	public Map<String, Object> findUniqueMapBySql(String sql,Object...args);
+	public int excuteUpdate(String sql,Object...args) ;
+	public int[] excuteBatch(String sql,Object[]...args);
+	public Long insertWithReturnGeneratedKey(final String sql,final Object...args);
+	public boolean callPro(String pro,Object...args );
+}

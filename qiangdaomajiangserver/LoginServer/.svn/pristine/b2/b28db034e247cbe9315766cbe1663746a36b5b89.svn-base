@@ -1,0 +1,42 @@
+package com.hogense.game.server.handler;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.hogense.dao.BaseDao;
+import com.hogense.data.ResponseData;
+import com.hogense.game.server.annotation.Bean;
+import com.hogense.game.server.annotation.HttpService;
+import com.hogense.server.define.Status;
+
+import atg.taglib.json.util.JSONObject;
+
+@HttpService("/weixin/get")
+public class WeiXinServlet extends BaseServerHttpServlet{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	@Bean
+	BaseDao dao;
+	@Override
+	protected void handler(HttpServletRequest request, HttpServletResponse response,ResponseData rsp) {
+		String token=request.getParameter("token");
+		try {
+			JSONObject user=dao.findUniqueJsonBySql("select openid,nickname,head from majiang.t_testweuxinuser where uid=?", token);
+			System.out.println(user);
+			if(user!=null)
+			{
+				user.put("sex", 0);
+				rsp.setStatus(Status.OK).setData(user);
+			}
+			else 
+			{
+				rsp.setStatus(Status.GET_USERINFO_FAIL);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			rsp.setStatus(Status.ERROR);
+		}
+	}
+}

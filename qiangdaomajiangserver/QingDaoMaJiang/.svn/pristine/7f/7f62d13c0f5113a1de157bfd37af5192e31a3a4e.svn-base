@@ -1,0 +1,8 @@
+package com.lebin.game.qdmj.define;
+
+import java.util.Timer;
+
+public class TimerTaskMng {
+	public static final Timer TIMER=new Timer();
+	
+}

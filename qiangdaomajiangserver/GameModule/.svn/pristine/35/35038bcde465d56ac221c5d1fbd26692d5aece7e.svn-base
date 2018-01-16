@@ -1,0 +1,44 @@
+package com.lebin.game.module.data;
+
+import java.io.Serializable;
+
+import com.lebin.game.module.IUser;
+
+public class Player extends SerializaableObject implements IUser, Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	public long uid;
+	public String nickname="";
+	public String head="";
+	public String ip="";
+	public String ipold="";
+	public Double lat;
+	public Double lon;
+	public int chairid=-1;
+	public int state;
+	public int score=0;//积分
+	public int playstate=Define.PLAY_STATE_NONE;
+	public int sex;
+	@Override
+	public Object getId() {
+		return uid;
+	}
+	public static void main(String[] args) {
+		System.out.println(new Player());
+	}
+	public boolean isOffline(){
+		return (state&Define.USER_STATE_OFFLINE)==Define.USER_STATE_OFFLINE;
+	}
+	public boolean isReady()
+	{
+		return ((state&Define.USER_STATE_READY)==Define.USER_STATE_READY)&&!isOffline();
+	}
+	public void reset()
+	{
+		this.playstate=Define.PLAY_STATE_NONE;
+		
+	}
+}

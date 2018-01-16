@@ -1,0 +1,129 @@
+package com.hogense.game.server.sevice;
+
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import com.hogense.data.ResponseData;
+import com.hogense.server.define.Status;
+import com.hogense.util.StringUtil;
+
+import atg.taglib.json.util.JSONArray;
+import atg.taglib.json.util.JSONException;
+import atg.taglib.json.util.JSONObject;
+
+public class RoomService extends BaseService{
+	private static final Logger LOG = Logger.getLogger(RoomService.class.getName());
+	public int createRoom(int roomid,String token,int gameid,long uid,String groupid,int type,String host,int port,int serverid,ResponseData rsp)
+	{
+		
+		JSONObject rs=dao.callReturnJsonPro("db_room.pro_create_room(?,?,?,?,?,?,?,?,?)", roomid,token,uid,groupid,gameid,type,serverid,host,port);
+		LOG.debug("创建房间"+rs);
+		try {
+			if(rs==null)
+				rsp.setStatus(Status.CREATE_ROOM_FAIL);
+			else 
+			{	
+				int status=rs.getInt("status");
+				String msg=rs.getString("msg");
+				rs.remove("status");
+				rs.remove("msg");
+				rsp.getStatus().msg=msg;
+				rsp.getStatus().code=status;
+				rsp.setData(rs);
+				if(status==200)
+				{
+					int curroomid=rs.getInt("roomid");
+					if(StringUtil.isNullOrEmpty(groupid))
+					{
+						//非机器人创建，直接加入到房间
+					
+						JSONObject jrs=dao.callReturnJsonPro("db_room.pro_join_room(?,?,?,?)", curroomid,token,uid,gameid);
+						LOG.debug("加入房间"+jrs);
+						if(jrs==null||jrs.getInt("status")!=200)
+						{
+							rsp.reset();
+							rsp.getStatus().code=jrs.getInt("status");
+							rsp.getStatus().msg=jrs.getString("msg");
+						}
+					}
+					return curroomid;
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
+	}
+	public JSONObject getCurRoom(String token,int gameid,long uid)
+	{
+		JSONObject rs=dao.callReturnJsonPro("db_room.pro_cur_room(?,?)",uid,gameid);
+		try {
+			if(rs==null||rs.getInt("status")!=200)
+				return null;
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return rs;
+	}
+	public JSONObject getRoomServerAddress(int roomid,int gameid)
+	{
+		JSONObject rs=dao.findUniqueJsonBySql("select t_gameinfo.serverid,t_gameinfo.host,"
+				+" t_gameinfo.port,t_room.roomid from db_room.t_room left join db_gamedata.t_gameinfo"
+			+" on t_gameinfo.serviceid=t_room.id where t_room.roomid=? and t_room.gameid=? and t_gameinfo.freestate=0", roomid,gameid);
+		return rs;
+	}
+	public JSONObject getCurRoomServerAddress(long uid,int gameid)
+	{
+		JSONObject rs=dao.findUniqueJsonBySql("select t_gameinfo.serverid,t_gameinfo.host,"
+				+" t_gameinfo.port,t_room.roomid from db_room.t_room left join db_gamedata.t_gameinfo"
+			+" on t_gameinfo.serviceid=t_room.id where t_room.id=(select lockserviceid from db_room.t_roomlock where uid=? and gameid=?) and t_gameinfo.freestate=0", uid,gameid);
+		return rs;
+	}
+	public JSONArray getGamePlayType(int gameid)
+	{
+		JSONArray array=findJsonBySql("select ruleid,rulename,ruledes,servicefee,minplayer,"
+				+ "maxplayer,rate,maxscore,maxround,maxcircle,round,circle from db_game.t_playtype where gameid=?", gameid);
+		return array;
+	}
+	public void joinCurRoom(String token,int gameid,long uid,ResponseData rsp)
+	{
+		
+		JSONObject rs=getCurRoom(token, gameid, uid);
+		if(rs==null)
+		{
+			rsp.setStatus(Status.NOT_INROOM);
+			return;
+		}
+		try {
+			joinRoom(rs.getInt("roomid"),token,gameid,uid,rsp);
+		} catch (JSONException e) {
+			e.printStackTrace();
+			rsp.setStatus(Status.ERROR);
+		}
+	}
+	public void joinRoom(int roomid,String token,int gameid,long uid,ResponseData rsp)
+	{
+		
+		JSONObject rs=dao.callReturnJsonPro("db_room.pro_join_room(?,?,?,?)", roomid,token,uid,gameid);
+		LOG.debug("加入房间"+rs);
+		try {
+			if(rs==null)
+				rsp.setStatus(Status.JOIN_ROOMFAIL);
+			else 
+			{	
+				int status=rs.getInt("status");
+				String msg=rs.getString("msg");
+				rs.remove("status");
+				rs.remove("msg");
+				rsp.getStatus().msg=msg;
+				rsp.getStatus().code=status;
+				rsp.setData(rs);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}

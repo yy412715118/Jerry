@@ -1,0 +1,12 @@
+package com.hogense.wechathelper.rmi;
+
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+
+public interface WechatService extends Remote{
+	public void sendLoginQrcode(String instanceid,String url) throws RemoteException;
+	public boolean login(String instanceid,String data)throws RemoteException;
+	public void onTimeout(String instanceid)throws RemoteException;
+	public void onExit(String instanceid)throws RemoteException;
+	public boolean sendMessage(String robotid,String gid,String msg)throws RemoteException;
+}

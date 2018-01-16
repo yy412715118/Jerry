@@ -1,0 +1,64 @@
+package com.hogense.game.server.sevice;
+
+import java.util.List;
+import java.util.Map;
+
+import com.hogense.dao.BaseDao;
+import com.hogense.dao.util.Arg;
+import com.hogense.dao.util.Sql;
+import com.hogense.game.server.annotation.Bean;
+import com.hogense.util.MD5Util;
+
+import atg.taglib.json.util.JSONArray;
+import atg.taglib.json.util.JSONObject;
+
+public class BaseService {
+	@Bean
+	protected BaseDao dao;
+	public List<Object>findBySql(String sql,Object...args) 
+	{
+		return dao.findBySql(sql, args);
+	}
+	public Object findUniqueBySql(String sql,Object...args)
+	{
+		return dao.findUniqueBySql(sql, args);
+	}
+	public JSONArray findJsonBySql(String sql,Object...args) 
+	{
+		return dao.findJsonBySql(sql, args);
+	}
+	public JSONObject findUniqueJsonBySql(String sql,Object...args)
+	{
+		return dao.findUniqueJsonBySql(sql, args);
+	}
+	public List<Map<String, Object>> findMapBySql(String sql,Object...args) 
+	{
+		return dao.findMapBySql(sql, args);
+	}
+	public Map<String, Object> findUniqueMapBySql(String sql,Object...args) 
+	{
+		return dao.findUniqueMapBySql(sql, args);
+	}
+	public int excuteUpdate(String sql,Object...args) 
+	{
+		return dao.excuteUpdate(sql,args);
+	}
+
+	public int excuteUpdate(Sql... sqls)
+	{
+		return dao.excuteUpdate(sqls);
+		
+	}
+	public int[] excuteBatch(String sql,Arg...args)
+	{
+		return dao.excuteBatch(sql, args);
+		
+	}
+	public  Long insertWithReturnGeneratedKey(final String sql,final Object...args)  {
+		return dao.insertWithReturnGeneratedKey(sql, args);
+	}
+	public boolean callPro(String pro,Object...args )
+	{
+		return dao.callPro(pro, args);
+	}
+}

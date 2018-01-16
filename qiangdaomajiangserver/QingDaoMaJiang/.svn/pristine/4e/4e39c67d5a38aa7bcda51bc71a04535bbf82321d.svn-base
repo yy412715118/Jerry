@@ -1,0 +1,652 @@
+/*
+Navicat MySQL Data Transfer
+
+Source Server         : localhost
+Source Server Version : 50151
+Source Host           : localhost:3306
+Source Database       : db_room
+
+Target Server Type    : MYSQL
+Target Server Version : 50151
+File Encoding         : 65001
+
+Date: 2017-03-28 18:21:47
+*/
+
+SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for t_room
+-- ----------------------------
+DROP TABLE IF EXISTS `t_room`;
+CREATE TABLE `t_room` (
+  `id` varchar(32) NOT NULL,
+  `roomid` bigint(20) NOT NULL COMMENT '房间号',
+  `master` bigint(20) NOT NULL DEFAULT '-1' COMMENT '房主',
+  `gameid` int(11) DEFAULT NULL COMMENT '游戏id',
+  `ruleid` int(11) NOT NULL COMMENT '规则id',
+  `servicefee` int(11) NOT NULL DEFAULT '1' COMMENT '服务费用',
+  `state` smallint(6) NOT NULL DEFAULT '0' COMMENT '0：空闲 1:等待玩家 2:游戏中',
+  `createtime` datetime NOT NULL COMMENT '创建时间',
+  `expirytime` datetime NOT NULL COMMENT '自动解散时间',
+  `groupid` varchar(64) DEFAULT NULL COMMENT '群号，机器人创建房间用',
+  `serverid` int(11) NOT NULL DEFAULT '-1',
+  PRIMARY KEY (`id`),
+  KEY `state` (`state`),
+  KEY `gameid_ownner` (`gameid`,`master`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for t_roomlock
+-- ----------------------------
+DROP TABLE IF EXISTS `t_roomlock`;
+CREATE TABLE `t_roomlock` (
+  `uid` bigint(20) NOT NULL,
+  `gameid` bigint(20) NOT NULL,
+  `lockserviceid` varchar(32) NOT NULL,
+  `lockroomid` bigint(20) NOT NULL,
+  `inroom` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否在房间 0：否 1：在',
+  `serverid` int(11) NOT NULL DEFAULT '-1',
+  PRIMARY KEY (`uid`,`gameid`),
+  KEY `lockid` (`lockserviceid`),
+  KEY `serverid` (`serverid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Procedure structure for pro_create_room
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `pro_create_room`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `pro_create_room`(IN _roomid BIGINT(20),-- 房间号
+IN _token VARCHAR(32),
+IN _uid BIGINT(20),
+IN _groupid VARCHAR(48),-- 群号
+IN _gameid INT(11),
+IN _ruleid INT(11),
+IN _serverid INT(11),  -- 房间服务器id
+IN _host VARCHAR(32),-- 房间服务器地址
+IN _port INT(11),IN _reqtime BIGINT(20))
+lb:BEGIN
+
+	DECLARE _status INT(11); 	-- 处理结果 
+	DECLARE _msg VARCHAR(32);  -- 返回信息
+  DECLARE _rulename VARCHAR(16); -- '规则名',
+  DECLARE _ruledes VARCHAR(256); --  '规则描述',
+  DECLARE _servicefee INT(11); --  '服务费用',
+	DECLARE _minplayer INT(11); --  '最少玩家数',
+  DECLARE _maxplayer INT(11); --  '最大玩家数',
+  DECLARE _rate INT(11); --  '倍率',
+  DECLARE _maxscore INT(11); --  '最高积分0：不限制',
+  DECLARE _modelid INT(11) ; --  '游戏模块id',
+  DECLARE _maxround INT(11) ; -- '最大局数',
+  DECLARE _maxcircle INT(11); --  '最大圈数',
+  DECLARE _round INT(11); --  '局数',
+  DECLARE _circle INT(11) ; -- '圈数',
+  DECLARE _freeroomtime INT(11); -- '自动释放房间时间，单位：分钟',
+	DECLARE _serviceid VARCHAR(32); -- 服务id,
+	DECLARE _curfee INT(11); -- 当前费用
+	DECLARE _account BIGINT(11);-- 当前玩家账户余额
+	DECLARE t_error INT DEFAULT 0;
+	DECLARE _lockaccount BIGINT ;-- 当前玩家锁定账户金额
+	DECLARE _curroomid BIGINT; -- 当前玩家创建的房间号
+	DECLARE _curseviceid VARCHAR(32); 
+	DECLARE _mastername VARCHAR(32);
+	SET _status=-1;
+	SET t_error=3;
+
+	SELECT account,lockaccount,nickname INTO  _account,_lockaccount,_mastername FROM db_account.t_account LEFT JOIN db_account.t_user 
+				ON t_user.uid=t_account.uid WHERE gameid=_gameid AND t_account.uid=_uid AND MD5(CONCAT(_uid,_gameid,t_account.accesstoken,_reqtime))=_token;
+	IF _account IS NULL THEN
+		SELECT 503 `status`,'抱歉，你的用户信息不存在或者登录已过期！' msg;
+		LEAVE	lb;
+	END IF;
+	
+	-- 如果不是机器人（根据groupid来判断），查询玩家是否在其他房间
+	IF _groupid IS NULL OR _groupid='' THEN
+		SET _groupid=NULL;
+		SELECT t_roomlock.lockroomid INTO _curroomid FROM db_room.t_roomlock WHERE uid=_uid AND gameid=_gameid;
+		IF _curroomid IS NOT NULL THEN
+				SELECT 612 `status`,CONCAT('您正在房间:',_curroomid," 中！") msg,_curroomid roomid;
+		LEAVE	lb;
+		ELSE 
+			SELECT t_room.roomid INTO _curroomid FROM db_room.t_room WHERE master=_uid AND gameid=_gameid and state!=2;
+			IF _curroomid IS NOT NULL THEN
+					SELECT 665 `status`,CONCAT('您创建的房间:',_curroomid," 还没开始游戏！") msg,_curroomid roomid;
+				LEAVE	lb;
+			END IF;
+		END IF;
+	END IF;
+	
+	-- 查询玩法信息
+	SELECT rulename,ruledes,servicefee,minplayer,maxplayer,rate,maxscore,modelid,maxround,maxcircle,round,circle,freeroomtime INTO 
+		_rulename,_ruledes,_servicefee,_minplayer,_maxplayer,_rate,_maxscore,_modelid,_maxround,_maxcircle,_round,_circle,_freeroomtime 
+		FROM db_game.t_playtype WHERE gameid=_gameid and ruleid=_ruleid;
+		
+	-- 玩法存在判断
+	IF _modelid IS NULL THEN 
+		SELECT 601 `status`,'玩法不存在！' msg;
+		LEAVE	lb;
+	END IF;
+
+	-- 判断玩家余额
+	IF _servicefee>_account-IF(_lockaccount>0,_lockaccount,0) THEN -- 余额不足
+		SELECT 603 `status`,'账户余额不足！' msg,_account account;
+		LEAVE	lb;
+	END IF;
+	
+	IF EXISTS (SELECT * from db_room.t_room WHERE roomid=_roomid) THEN
+		SELECT 666 `status`,'无法创建房间,房间号已被使用！' msg;
+		LEAVE	lb;
+	END IF;
+	BEGIN
+		DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET t_error=1;
+		START TRANSACTION;
+		-- 创建房间
+		
+		SELECT REPLACE(UUID(),'-','') INTO _serviceid;
+		INSERT INTO db_room.t_room(id,roomid,servicefee,`master`,gameid,ruleid,state,createtime,expirytime,groupid,serverid)
+			VALUES(_serviceid,_roomid,_servicefee,_uid,_gameid,_ruleid,1,NOW(),
+				DATE_ADD(NOW(),INTERVAL _freeroomtime MINUTE),_groupid,_serverid);
+				
+		-- 创建游戏信息
+		INSERT INTO db_gamedata.t_gameinfo(serviceid,roomid,master,gameid,ruleid,rulename,servicefee,
+			rate,maxscore,modelid,minplayer,maxplayer,playercount,maxround,maxcircle,round,circle,curround,curcircle,
+			host,port,state,freestate,serverid,createtime,freetime,starttime,endtime,createdate,groupid)
+			VALUES( _serviceid,_roomid,_uid,_gameid,_ruleid,_rulename,_servicefee,
+			_rate,_maxscore,_modelid,_minplayer,_maxplayer,0,_maxround,_maxcircle,_round,_circle,0,0,
+			_host,_port,0,0,_serverid,NOW(),NULL,NULL,NULL,CURDATE(),_groupid);
+
+		-- 锁定账户
+		UPDATE db_account.t_account SET lockaccount=lockaccount+_servicefee WHERE gameid=_gameid and uid=_uid and account>_servicefee;
+		SELECT account,lockaccount INTO _account,_lockaccount FROM db_account.t_account WHERE gameid=_gameid and uid=_uid;
+		INSERT INTO db_log.t_accountlog(createdate,gameid,uid,createtime,op,account,lockaccount,opvalue,msg)
+			VALUES( CURDATE(),_gameid,_uid,NOW(),1,_account,_lockaccount,_servicefee,CONCAT('创建房间，房间号：',_roomid));
+
+		IF ROW_COUNT()=0 THEN
+			ROLLBACK;
+			SELECT 603 `status`,'账户余额不足！' msg,_account account;
+			LEAVE	lb;
+		END IF;
+		IF t_error = 1 THEN
+				ROLLBACK;
+			SELECT 604 `status`,'无法创建房间！游戏信息写入失败' msg;
+		ELSE
+			COMMIT;
+			SELECT  200 `status`,'成功' msg,roomid,host,port,serverid,`master`,maxplayer,minplayer,maxcircle,maxround,circle,round,rate,maxscore,gameid,t_gameinfo.rulename,t_gameinfo.serviceid,_freeroomtime freeroomtime,_account account,_mastername mastername FROM db_gamedata.t_gameinfo WHERE t_gameinfo.serviceid=_serviceid;
+		END IF;
+	END;
+END
+;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for pro_cur_room
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `pro_cur_room`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `pro_cur_room`(
+IN _uid BIGINT(20),
+IN _gameid INT(11))
+lb:BEGIN
+
+	DECLARE _lockroomid BIGINT(20); -- 锁定房间号
+	DECLARE _lockserviceid VARCHAR(32); -- 锁定服务id
+	DECLARE t_error INT DEFAULT 0;
+	DECLARE _host VARCHAR(32); -- 服务地址
+	DECLARE _port INT(11); -- 服务端口
+	DECLARE _serverid INT(11); -- 服务器id
+	DECLARE _freestate INT(11); -- 房间解散状态
+	DECLARE _state INT(11); -- 游戏状态
+	SET t_error=0;
+
+
+	
+	-- 查询玩家当前所在房间
+	SELECT lockroomid,lockserviceid INTO _lockroomid,_lockserviceid FROM db_room.t_roomlock WHERE uid=_uid and gameid=_gameid;
+
+	
+	IF _lockserviceid IS  NULL  THEN
+		SELECT -1 `status`,'当前没有锁定的房间！' msg ;
+		LEAVE	lb;
+	END IF;
+ 
+	-- 查询房间信息
+	SELECT t_room.state,t_gameinfo.`host`,t_gameinfo.`port`,t_gameinfo.serverid,freestate
+		INTO _state,_host,_port,_serverid,_freestate FROM db_room.t_room 
+		LEFT JOIN db_gamedata.t_gameinfo ON t_room.id=t_gameinfo.serviceid 
+		AND t_room.roomid=t_gameinfo.roomid AND t_room.gameid=t_gameinfo.gameid
+		WHERE t_room.id=_lockserviceid  AND t_room.gameid=_gameid AND t_room.state!=0;
+
+	IF _state IS NULL OR _freestate IS NULL OR _freestate!=0  THEN	
+		
+		-- 解除玩家房间锁定
+			DELETE FROM db_room.t_roomlock WHERE uid=_uid and gameid=_gameid and lockserviceid=_lockserviceid;
+			-- 更新人数
+			UPDATE db_gamedata.t_gameinfo,(SELECT COUNT(*)as ct FROM db_room.t_roomlock WHERE gameid=_gameid AND lockserviceid=_lockserviceid)c SET playercount=c.ct 
+				WHERE t_gameinfo.serviceid= _lockserviceid;
+		SELECT -1 `status`,'当前没有锁定的房间！' msg ;
+		LEAVE	lb;
+	END IF;
+
+	SELECT 200 `status`, '成功' msg,_lockroomid roomid,_serverid serverid,_host `host`,_port `port`;
+	
+END
+;
+;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for pro_exit_room
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `pro_exit_room`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `pro_exit_room`(IN _roomid BIGINT(20),-- 房间号
+IN _uid BIGINT(20),
+IN _gameid INT(11))
+BEGIN
+
+	DECLARE _lockserviceid VARCHAR(32); -- 锁定服务号
+	-- 查询房间信息
+	SELECT lockserviceid INTO _lockserviceid FROM db_room.t_roomlock WHERE uid=_uid AND gameid=_gameid AND lockroomid=_roomid;
+	IF _lockserviceid IS NOT NULL THEN
+		-- 解除玩家房间锁定
+		DELETE FROM db_room.t_roomlock WHERE uid=_uid and gameid=_gameid and lockserviceid=_lockserviceid;
+		-- 更新人数
+		UPDATE db_gamedata.t_gameinfo,(SELECT COUNT(*)as ct FROM db_room.t_roomlock WHERE gameid=_gameid AND lockserviceid=_lockserviceid)c SET playercount=c.ct 
+			WHERE t_gameinfo.serviceid= _lockserviceid;
+		SELECT 200 `status`, '成功' msg;
+	ELSE
+		SELECT 611 `status`, '您不在房间中' msg;
+	END IF;
+	
+END
+;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for pro_free_room
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `pro_free_room`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `pro_free_room`(IN _roomid BIGINT(20),-- 房间id
+IN _freetype INT(11))
+lb:BEGIN
+	
+	DECLARE _state INT;
+	DECLARE _gameid INT(11); 	-- 游戏id
+	DECLARE _serviceid VARCHAR(32); -- 服务id
+	DECLARE _servicefee INT;-- 服务费用
+	DECLARE _master BIGINT;-- 房主
+	DECLARE error_code INT DEFAULT 0 ;
+
+	SELECT id,gameid,`master` INTO _serviceid,_gameid,_master FROM db_room.t_room WHERE roomid=_roomid;
+	IF _serviceid IS NULL OR _gameid IS NULL OR _master IS NULL THEN 
+		SELECT 606 `status`, '房间不存在或者已解散！' msg;
+		LEAVE lb;
+	END IF;
+	BEGIN
+		DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET error_code=1;
+		START TRANSACTION;
+		DELETE FROM db_room.t_room WHERE id=_serviceid;
+		DELETE FROM db_room.t_roomlock WHERE gameid=_gameid AND lockserviceid=_serviceid;
+		-- 查询未解散游戏房间状态
+		SELECT state,servicefee INTO _state,_servicefee FROM db_gamedata.t_gameinfo WHERE serviceid=_serviceid AND roomid=_roomid AND gameid=_gameid AND `master`=_master AND freestate=0;
+		IF _state IS NULL THEN 
+			COMMIT;
+			SELECT 606 `status`, '房间不存在或已解散！' msg;
+			LEAVE lb;
+		END IF;
+		IF _freetype=0 THEN
+			SET _freetype=3;
+		END IF;
+		UPDATE db_gamedata.t_gameinfo SET playercount=0,freestate=_freetype,freetime=NOW() WHERE serviceid=_serviceid;
+		IF _state=0 THEN 
+			-- 未扣费则解锁用户账户
+			UPDATE db_account.t_account SET lockaccount=lockaccount-IF(_servicefee>lockaccount,lockaccount,_servicefee) WHERE gameid=_gameid and uid=_master;
+			-- 写入日志
+			INSERT INTO db_log.t_accountlog(createdate,gameid,uid,createtime,op,account,lockaccount,opvalue,msg)
+				SELECT CURDATE(),_gameid,_master,NOW(),2,account,lockaccount,_servicefee,CONCAT('房间解散，未结算，费用解除锁定，房间号：',_roomid) FROM db_account.t_account WHERE gameid=_gameid and uid=_master;
+
+		END IF;
+		IF error_code=1 THEN
+			ROLLBACK;
+			SELECT 607 `status`, '房间解散失败！' msg;
+		ELSE
+			COMMIT;
+			SELECT 200 `status`, '成功！' msg;
+		END IF;
+	END;
+END
+;
+;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for pro_free_rooms
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `pro_free_rooms`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `pro_free_rooms`(IN _serverid int(11))
+BEGIN
+	DECLARE _serviceid VARCHAR(32);
+	DECLARE _servicefee INT;
+	DECLARE _roomid INT;
+	DECLARE _state SMALLINT;
+	DECLARE _freestate SMALLINT;
+	DECLARE _master BIGINT;
+	DECLARE _gameid INT;
+	DECLARE endflag INT;
+	DECLARE mcur CURSOR FOR SELECT t_room.id,t_gameinfo.servicefee,
+					t_gameinfo.roomid,t_gameinfo.state,t_gameinfo.freestate,
+					t_gameinfo.master,t_gameinfo.gameid 
+					FROM db_room.t_room LEFT JOIN db_gamedata.t_gameinfo ON t_gameinfo.serviceid=t_room.id
+					WHERE t_room.serverid=_serverid;
+	DECLARE CONTINUE HANDLER FOR NOT found SET endflag=1;
+	SET endflag=0;
+	OPEN mcur;
+	REPEAT 
+		FETCH mcur INTO _serviceid,_servicefee,_roomid,_state,_freestate,_master,_gameid;
+			IF _freestate=0 THEN -- 未解散
+				IF _state=0 THEN -- 未结算，解锁锁定账户
+					UPDATE db_account.t_account SET lockaccount=lockaccount-IF(_servicefee>lockaccount,lockaccount,_servicefee) WHERE gameid=_gameid and uid=_master;
+					-- 写入日志
+					INSERT INTO db_log.t_accountlog(createdate,gameid,uid,createtime,op,account,lockaccount,opvalue,msg)
+						SELECT CURDATE(),_gameid,_master,NOW(),2,account,lockaccount,_servicefee,CONCAT('服务器维护，房间解散，解除房费锁定，房间号：',_roomid) FROM db_account.t_account WHERE gameid=_gameid and uid=_master;
+				ELSEIF _state=1 THEN -- 已结算，退还费用
+					UPDATE db_account.t_account SET account=account+_servicefee WHERE gameid=_gameid and uid=_master;
+					-- 写入日志
+					INSERT INTO db_log.t_accountlog(createdate,gameid,uid,createtime,op,account,lockaccount,opvalue,msg)
+						SELECT CURDATE(),_gameid,_master,NOW(),2,account,lockaccount,_servicefee,CONCAT('服务器维护，房间解散，退还房间费用，房间号：',_roomid) FROM db_account.t_account WHERE gameid=_gameid and uid=_master;
+				END IF;
+				UPDATE db_gamedata.t_gameinfo SET freestate=4,state=-1,freetime=NOW() WHERE serviceid=_serviceid;
+				DELETE FROM db_room.t_roomlock WHERE lockserviceid=_serviceid;
+				DELETE FROM db_room.t_room WHERE id=_serviceid;
+			END IF;
+			SET _serviceid=NULL,_servicefee=0,_freestate=NULL,_state=NULL,_gameid=NULL,_master=NULL;
+		UNTIL endflag=1 
+	END REPEAT;
+	CLOSE mcur;
+	
+END
+;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for pro_join_room
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `pro_join_room`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `pro_join_room`(IN _roomid BIGINT(20),-- 房间号
+IN _token VARCHAR(32),
+IN _uid BIGINT(20),
+IN _gameid INT(11),IN _reqtime BIGINT(20))
+lb:BEGIN
+
+	DECLARE _serviceid VARCHAR(32); -- 服务id,
+	DECLARE _lockroomid BIGINT(20); -- 锁定房间号
+	DECLARE _lockserviceid VARCHAR(32); -- 锁定服务id
+	DECLARE t_error INT DEFAULT 0;
+	DECLARE _host VARCHAR(32); -- 服务地址
+	DECLARE _port INT(11); -- 服务端口
+	DECLARE _serverid INT(11); -- 服务器id
+	DECLARE _freestate INT(11); -- 房间解散状态
+	DECLARE _state INT(11); -- 游戏状态
+	SET t_error=0;
+
+	IF NOT EXISTS (SELECT * FROM db_account.t_account  WHERE gameid=_gameid AND uid=_uid AND MD5(CONCAT(_uid,_gameid,accesstoken,_reqtime))=_token) THEN
+		SELECT 503 `status`,'抱歉，你的用户信息不存在或者登录已过期！' msg;
+		LEAVE	lb;
+	END IF;
+	
+	-- 查询玩家当前所在房间
+	SELECT lockroomid,lockserviceid INTO _lockroomid,_lockserviceid FROM db_room.t_roomlock WHERE uid=_uid and gameid=_gameid;
+
+	-- 查询加入房间信息
+	SELECT id INTO _serviceid FROM db_room.t_room WHERE t_room.roomid=_roomid;
+	
+	IF _lockserviceid IS NOT NULL AND _lockserviceid!=_serviceid THEN
+		-- 不在一个房间，判断原来的房间是否过期
+		IF EXISTS (SELECT * FROM db_room.t_room LEFT JOIN db_gamedata.t_gameinfo ON t_gameinfo.serviceid=t_room.id 
+			WHERE t_room.id=_lockserviceid AND t_gameinfo.freestate=0) THEN
+			SELECT 609 `status`,'加入房间失败，您已在其他房间！' msg,_lockroomid roomid ;
+			LEAVE	lb;
+		ELSE
+			-- 解除房间锁定
+			DELETE FROM db_room.t_roomlock WHERE uid=_uid and gameid=_gameid AND lockserviceid=_lockserviceid;
+			-- 更新人数
+			UPDATE db_gamedata.t_gameinfo,(SELECT COUNT(*)as ct FROM db_room.t_roomlock WHERE gameid=_gameid AND lockserviceid=_lockserviceid)c SET playercount=c.ct 
+				WHERE t_gameinfo.serviceid= _lockserviceid;
+		END IF;
+	END IF;
+ 
+	-- 查询房间信息
+	SELECT t_room.state,t_gameinfo.`host`,t_gameinfo.`port`,t_gameinfo.serverid,freestate,t_gameinfo.serviceid
+		INTO _state,_host,_port,_serverid,_freestate,_serviceid FROM db_room.t_room 
+		LEFT JOIN db_gamedata.t_gameinfo ON t_room.id=t_gameinfo.serviceid 
+		AND t_room.roomid=t_gameinfo.roomid AND t_room.gameid=t_gameinfo.gameid
+		WHERE t_room.roomid=_roomid AND t_room.gameid=_gameid AND t_room.state!=0;
+
+	IF _state IS NULL OR _serviceid IS NULL OR _freestate!=0  THEN	
+		
+		IF _serviceid=_lockserviceid THEN
+			-- 解除玩家房间锁定
+			DELETE FROM db_room.t_roomlock WHERE uid=_uid and gameid=_gameid and lockserviceid=_serviceid;
+			-- 更新人数
+			UPDATE db_gamedata.t_gameinfo,(SELECT COUNT(*)as ct FROM db_room.t_roomlock WHERE gameid=_gameid AND lockserviceid=_serviceid)c SET playercount=c.ct 
+				WHERE t_gameinfo.serviceid= _serviceid;
+		END IF;
+		SELECT 606 `status`, '房间不存在或已解散！' msg ;
+		LEAVE	lb;
+	END IF;
+
+  IF _lockserviceid=_serviceid THEN
+		SELECT 200 `status`, '成功' msg,_roomid roomid,_serverid serverid,_host `host`,_port `port`;
+		LEAVE	lb;
+	END IF;
+
+	IF _state=2  THEN
+		SELECT 609 `status`, '加入房间失败，游戏已开始！' msg ;
+		LEAVE	lb;
+	END IF;
+	
+	BEGIN
+	 DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET t_error=1;
+		START TRANSACTION;
+		UPDATE db_gamedata.t_gameinfo SET playercount=playercount+1 WHERE serviceid=_serviceid AND playercount<maxplayer AND freestate=0;
+		IF ROW_COUNT()=0 THEN
+			SELECT 609 `status`, '加入房间失败，房间已满员！' msg ;
+			LEAVE	lb;
+		END IF;
+		INSERT INTO db_room.t_roomlock(uid,gameid,lockroomid,lockserviceid,serverid) values(_uid,_gameid,_roomid,_serviceid,_serverid);
+		IF t_error=1 THEN
+			ROLLBACK;
+			SELECT 609 `status`, '加入房间失败，无法锁定房间！' msg ;
+		ELSE
+			COMMIT;
+			SELECT 200 `status`, '成功' msg,_roomid roomid,_serverid serverid,_host `host`,_port `port`;
+		END IF;
+	END;
+END
+;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for pro_pay_room
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `pro_pay_room`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `pro_pay_room`(IN _roomid BIGINT(20),IN _serviceid VARCHAR(32) )
+lb:BEGIN
+	
+	DECLARE _state INT;
+	DECLARE _gameid INT(11); 	-- 游戏id
+	DECLARE _servicefee INT;-- 服务费用
+	DECLARE _master BIGINT;-- 房主
+	DECLARE error_code INT DEFAULT 0 ;
+	SELECT gameid,`master` INTO _gameid,_master FROM db_room.t_room WHERE id=_serviceid AND roomid=_roomid;
+	IF _master IS NULL OR _gameid IS NULL  THEN 
+		SELECT 606 `status`, '房间不存在或者已解散！' msg;
+		LEAVE lb;
+	END IF;
+	BEGIN
+	  DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET error_code=1;
+		START TRANSACTION;
+		-- 查询未解散游戏房间状态
+		SELECT state,servicefee INTO _state,_servicefee FROM db_gamedata.t_gameinfo WHERE serviceid=_serviceid AND roomid=_roomid AND gameid=_gameid AND `master`=_master AND freestate=0;
+		IF _state IS NULL THEN 
+			SELECT 606 `status`, '房间不存在或已解散！' msg;
+			LEAVE lb;
+		END IF;
+		IF _state=1 THEN 
+			SELECT 608 `status`, '已经扣费，不能再次扣费！' msg;
+			LEAVE lb;
+		END IF;
+		UPDATE db_gamedata.t_gameinfo SET state=1 WHERE serviceid=_serviceid;
+		IF _state=0 THEN 
+			-- 未结算则扣除用户账户
+			
+			UPDATE db_account.t_account SET lockaccount=lockaccount-IF(lockaccount<_servicefee,lockaccount,_servicefee),account=account-IF(account<_servicefee,account,_servicefee) WHERE gameid=_gameid and uid=_master;
+			-- 写入日志
+			INSERT INTO db_log.t_accountlog(createdate,gameid,uid,createtime,op,account,lockaccount,opvalue,msg)
+				SELECT CURDATE(),_gameid,_master,NOW(),3,account,lockaccount,_servicefee,CONCAT('扣除房间费用，房间号：',_roomid) FROM db_account.t_account WHERE gameid=_gameid and uid=_master;
+
+		END IF;
+		IF error_code=1 THEN
+			ROLLBACK;
+			SELECT 608 `status`, '房间费用扣除失败！' msg;
+		ELSE
+			COMMIT;
+			SELECT 200 `status`, '成功！' msg,uid,account FROM db_account.t_account WHERE gameid=_gameid and uid=_master;
+		END IF;
+	END;
+END
+;;
+DELIMITER ;
+
+-- ----------------------------
+-- Procedure structure for pro_robotcreate_room
+-- ----------------------------
+DROP PROCEDURE IF EXISTS `pro_robotcreate_room`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `pro_robotcreate_room`(IN _roomid BIGINT(20),-- 房间号
+IN _uid BIGINT(20),
+IN _groupid VARCHAR(48),-- 群号
+IN _gameid INT(11),
+IN _ruleid INT(11),
+IN _serverid INT(11),  -- 房间服务器id
+IN _host VARCHAR(32),-- 房间服务器地址
+IN _port INT(11),IN _reqtime BIGINT(20))
+lb:BEGIN
+
+	DECLARE _status INT(11); 	-- 处理结果 
+	DECLARE _msg VARCHAR(32);  -- 返回信息
+  DECLARE _rulename VARCHAR(16); -- '规则名',
+  DECLARE _ruledes VARCHAR(256); --  '规则描述',
+  DECLARE _servicefee INT(11); --  '服务费用',
+	DECLARE _minplayer INT(11); --  '最少玩家数',
+  DECLARE _maxplayer INT(11); --  '最大玩家数',
+  DECLARE _rate INT(11); --  '倍率',
+  DECLARE _maxscore INT(11); --  '最高积分0：不限制',
+  DECLARE _modelid INT(11) ; --  '游戏模块id',
+  DECLARE _maxround INT(11) ; -- '最大局数',
+  DECLARE _maxcircle INT(11); --  '最大圈数',
+  DECLARE _round INT(11); --  '局数',
+  DECLARE _circle INT(11) ; -- '圈数',
+  DECLARE _freeroomtime INT(11); -- '自动释放房间时间，单位：分钟',
+	DECLARE _serviceid VARCHAR(32); -- 服务id,
+	DECLARE _curfee INT(11); -- 当前费用
+	DECLARE _account BIGINT(11);-- 当前玩家账户余额
+	DECLARE t_error INT DEFAULT 0;
+	DECLARE _lockaccount BIGINT ;-- 当前玩家锁定账户金额
+	DECLARE _curroomid BIGINT; -- 当前玩家创建的房间号
+	DECLARE _curseviceid VARCHAR(32); 
+	DECLARE _mastername VARCHAR(32);
+	DECLARE _playercount INT(11);
+	DECLARE _curplayercount INT(11);
+	SET _status=-1;
+	SET t_error=3;
+
+	SELECT account,lockaccount,nickname INTO  _account,_lockaccount,_mastername FROM db_account.t_account LEFT JOIN db_account.t_user 
+				ON t_user.uid=t_account.uid WHERE gameid=_gameid AND t_account.uid=_uid;
+	IF _account IS NULL THEN
+		SELECT 503 `status`,'抱歉，你的用户信息不存在或者登录已过期！' msg;
+		LEAVE	lb;
+	END IF;
+	
+	-- 如果不是机器人（根据groupid来判断）
+	IF _groupid IS NULL OR _groupid='' THEN
+			SELECT -33 `status`,'缺少群id' msg;
+			LEAVE	lb;
+	END IF;
+	
+  SELECT t_room.id,t_room.roomid,db_gamedata.t_gameinfo.rulename,db_gamedata.t_gameinfo.minplayer,db_gamedata.t_gameinfo.playercount 
+		INTO _curseviceid,_curroomid,_rulename,_playercount,_curplayercount FROM db_room.t_room LEFT JOIN db_gamedata.t_gameinfo
+		ON db_gamedata.t_gameinfo.serviceid=t_room.id
+		WHERE t_room.master=_uid AND t_room.gameid=_gameid and t_room.state!=2 AND t_room.groupid=_groupid AND t_room.ruleid=_ruleid;
+	IF _curroomid IS NOT NULL THEN
+			SELECT 100 `status`,'有房间正在进行中' msg,_mastername mastername,_uid `master`,_rulename rulename
+					,_curroomid roomid,_playercount playercount,_curplayercount curplayercount,_curseviceid serviceid;
+			LEAVE	lb;
+	END IF;
+
+	-- 查询玩法信息
+	SELECT rulename,ruledes,servicefee,minplayer,maxplayer,rate,maxscore,modelid,maxround,maxcircle,round,circle,freeroomtime INTO 
+		_rulename,_ruledes,_servicefee,_minplayer,_maxplayer,_rate,_maxscore,_modelid,_maxround,_maxcircle,_round,_circle,_freeroomtime 
+		FROM db_game.t_playtype WHERE gameid=_gameid and ruleid=_ruleid;
+		
+	-- 玩法存在判断
+	IF _modelid IS NULL THEN 
+		SELECT 601 `status`,'玩法不存在！' msg;
+		LEAVE	lb;
+	END IF;
+
+	-- 判断玩家余额
+	IF _servicefee>_account-IF(_lockaccount>0,_lockaccount,0) THEN -- 余额不足
+		SELECT 603 `status`,'账户余额不足！' msg,_account account;
+		LEAVE	lb;
+	END IF;
+	
+	IF EXISTS (SELECT * from db_room.t_room WHERE roomid=_roomid) THEN
+		SELECT 666 `status`,'无法创建房间,房间号已被使用！' msg;
+		LEAVE	lb;
+	END IF;
+	BEGIN
+		DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET t_error=1;
+		START TRANSACTION;
+		-- 创建房间
+		
+		SELECT REPLACE(UUID(),'-','') INTO _serviceid;
+		INSERT INTO db_room.t_room(id,roomid,servicefee,`master`,gameid,ruleid,state,createtime,expirytime,groupid,serverid)
+			VALUES(_serviceid,_roomid,_servicefee,_uid,_gameid,_ruleid,1,NOW(),
+				DATE_ADD(NOW(),INTERVAL _freeroomtime MINUTE),_groupid,_serverid);
+				
+		-- 创建游戏信息
+		INSERT INTO db_gamedata.t_gameinfo(serviceid,roomid,master,gameid,ruleid,rulename,servicefee,
+			rate,maxscore,modelid,minplayer,maxplayer,playercount,maxround,maxcircle,round,circle,curround,curcircle,
+			host,port,state,freestate,serverid,createtime,freetime,starttime,endtime,createdate,groupid)
+			VALUES( _serviceid,_roomid,_uid,_gameid,_ruleid,_rulename,_servicefee,
+			_rate,_maxscore,_modelid,_minplayer,_maxplayer,0,_maxround,_maxcircle,_round,_circle,0,0,
+			_host,_port,0,0,_serverid,NOW(),NULL,NULL,NULL,CURDATE(),_groupid);
+
+		-- 锁定账户
+		UPDATE db_account.t_account SET lockaccount=lockaccount+_servicefee WHERE gameid=_gameid and uid=_uid and account>_servicefee;
+		SELECT account,lockaccount INTO _account,_lockaccount FROM db_account.t_account WHERE gameid=_gameid and uid=_uid;
+		INSERT INTO db_log.t_accountlog(createdate,gameid,uid,createtime,op,account,lockaccount,opvalue,msg)
+			VALUES( CURDATE(),_gameid,_uid,NOW(),1,_account,_lockaccount,_servicefee,CONCAT('创建房间，房间号：',_roomid));
+
+		IF ROW_COUNT()=0 THEN
+			ROLLBACK;
+			SELECT 603 `status`,'账户余额不足！' msg,_account account;
+			LEAVE	lb;
+		END IF;
+		IF t_error = 1 THEN
+				ROLLBACK;
+			SELECT 604 `status`,'无法创建房间！游戏信息写入失败' msg;
+		ELSE
+			COMMIT;
+			SELECT  200 `status`,'成功' msg,roomid,host,port,serverid,`master`,maxplayer,minplayer,maxcircle,maxround,circle,round,rate,maxscore,gameid,t_gameinfo.rulename,t_gameinfo.serviceid,_freeroomtime freeroomtime,_account account,_mastername mastername FROM db_gamedata.t_gameinfo WHERE t_gameinfo.serviceid=_serviceid;
+		END IF;
+	END;
+END
+;;
+DELIMITER ;

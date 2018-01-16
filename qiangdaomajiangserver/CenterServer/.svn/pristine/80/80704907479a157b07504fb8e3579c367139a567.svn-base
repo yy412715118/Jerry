@@ -1,0 +1,26 @@
+package com.hogense.game.server.sevice;
+
+import atg.taglib.json.util.JSONArray;
+import atg.taglib.json.util.JSONObject;
+
+public class HistoryService extends BaseService{
+	public JSONObject getWeekData(long uid,int gameid)
+	{
+		return dao.callReturnJsonPro("db_gamedata.fun_week_info(?,?)", uid,gameid);
+	}
+	public JSONArray getRecordData(long uid,int gameid)
+	{
+		String sql="SELECT roomid,createtime as time,resultdata,serviceid from db_gamedata.t_gameinfo WHERE serviceid"+
+				" in (SELECT DISTINCT serviceid from db_gamedata.t_gameresult WHERE "+
+				" createdate>DATE_ADD(NOW(),INTERVAL -7 DAY) and gameid=? and uid=? ORDER BY createtime desc) " +
+				" HAVING resultdata IS NOT null ORDER BY starttime desc LIMIT 30;";
+		return dao.findJsonBySql(sql, gameid,uid); 
+		//return dao.callReturnJsonPro("db_gamedata.fun_week_info(?,?)", uid,gameid);
+	}
+	public JSONArray getReviewData(String serviceid)
+	{
+
+		String sql="SELECT circle,round,roomid,time,data,url from db_gamedata.t_record WHERE serviceid=? ORDER BY round asc;";
+		return dao.findJsonBySql(sql, serviceid); 
+	}
+}

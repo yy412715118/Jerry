@@ -1,0 +1,308 @@
+2017-04-14 12:35:03 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 12:35:04 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 12:35:05 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 12:35:06 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 12:35:07 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 12:35:08 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 12:35:09 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 12:35:10 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 12:35:11 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 12:35:13 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 12:35:14 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 12:35:15 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 12:35:16 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 12:35:17 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 12:37:08 [New I/O server worker #1-1] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 12:48:25 [DubboShutdownHook] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 12:51:15 [New I/O server worker #1-2] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 14:26:45 [New I/O server worker #1-2] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 15:08:45 [New I/O server worker #1-2] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 15:20:31 [New I/O server worker #1-2] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 15:20:39 [DubboServerHandler-192.168.1.112:20881-thread-6] WARN  c.a.dubbo.remoting.exchange.codec.ExchangeCodec -  [DUBBO] Fail to encode response: Response [id=9, version=2.0.0, status=20, event=false, error=null, result=RpcResult [result={"status":200,"msg":"成功","roomid":181075,"host":"192.168.1.112","port":9090,"serverid":18,"master":1000046,"maxplayer":4,"minplayer":4,"maxcircle":2,"maxround":8,"circle":2,"round":8,"rate":1,"maxscore":0,"gameid":100000,"rulename":"2圈8局","serviceid":"ac96787c20cd11e7a22a9c4ba24c9711","freeroomtime":30,"account":55,"mastername":"萌萌1号","ruleid":2}, exception=null]], send bad_response info instead, cause: Serialized class atg.taglib.json.util.JSONObject must implement java.io.Serializable, dubbo version: 2.5.3, current host: 127.0.0.1
+java.lang.IllegalStateException: Serialized class atg.taglib.json.util.JSONObject must implement java.io.Serializable
+	at com.alibaba.com.caucho.hessian.io.SerializerFactory.getDefaultSerializer(SerializerFactory.java:261)
+	at com.alibaba.com.caucho.hessian.io.SerializerFactory.getSerializer(SerializerFactory.java:233)
+	at com.alibaba.com.caucho.hessian.io.Hessian2Output.writeObject(Hessian2Output.java:406)
+	at com.alibaba.dubbo.common.serialize.support.hessian.Hessian2ObjectOutput.writeObject(Hessian2ObjectOutput.java:92)
+	at com.alibaba.dubbo.rpc.protocol.dubbo.DubboCodec.encodeResponseData(DubboCodec.java:200)
+	at com.alibaba.dubbo.remoting.exchange.codec.ExchangeCodec.encodeResponse(ExchangeCodec.java:276)
+	at com.alibaba.dubbo.remoting.exchange.codec.ExchangeCodec.encode(ExchangeCodec.java:77)
+	at com.alibaba.dubbo.rpc.protocol.dubbo.DubboCountCodec.encode(DubboCountCodec.java:39)
+	at com.alibaba.dubbo.remoting.transport.netty.NettyCodecAdapter$InternalEncoder.encode(NettyCodecAdapter.java:81)
+	at org.jboss.netty.handler.codec.oneone.OneToOneEncoder.handleDownstream(OneToOneEncoder.java:66)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendDownstream(DefaultChannelPipeline.java:591)
+	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendDownstream(DefaultChannelPipeline.java:776)
+	at org.jboss.netty.channel.SimpleChannelHandler.writeRequested(SimpleChannelHandler.java:304)
+	at com.alibaba.dubbo.remoting.transport.netty.NettyHandler.writeRequested(NettyHandler.java:99)
+	at org.jboss.netty.channel.SimpleChannelHandler.handleDownstream(SimpleChannelHandler.java:266)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendDownstream(DefaultChannelPipeline.java:591)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendDownstream(DefaultChannelPipeline.java:582)
+	at org.jboss.netty.channel.Channels.write(Channels.java:611)
+	at org.jboss.netty.channel.Channels.write(Channels.java:578)
+	at org.jboss.netty.channel.AbstractChannel.write(AbstractChannel.java:251)
+	at com.alibaba.dubbo.remoting.transport.netty.NettyChannel.send(NettyChannel.java:98)
+	at com.alibaba.dubbo.remoting.transport.AbstractPeer.send(AbstractPeer.java:51)
+	at com.alibaba.dubbo.remoting.exchange.support.header.HeaderExchangeHandler.received(HeaderExchangeHandler.java:171)
+	at com.alibaba.dubbo.remoting.transport.DecodeHandler.received(DecodeHandler.java:52)
+	at com.alibaba.dubbo.remoting.transport.dispatcher.ChannelEventRunnable.run(ChannelEventRunnable.java:82)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+2017-04-14 15:20:39 [DubboServerHandler-192.168.1.112:20881-thread-7] WARN  c.a.dubbo.remoting.exchange.codec.ExchangeCodec -  [DUBBO] Fail to encode response: Response [id=10, version=2.0.0, status=20, event=false, error=null, result=RpcResult [result={"status":200,"msg":"成功","roomid":181075,"host":"192.168.1.112","port":9090,"serverid":18,"master":1000046,"maxplayer":4,"minplayer":4,"maxcircle":2,"maxround":8,"circle":2,"round":8,"rate":1,"maxscore":0,"gameid":100000,"rulename":"2圈8局","serviceid":"ac96787c20cd11e7a22a9c4ba24c9711","freeroomtime":30,"account":55,"mastername":"萌萌1号","ruleid":2}, exception=null]], send bad_response info instead, cause: Serialized class atg.taglib.json.util.JSONObject must implement java.io.Serializable, dubbo version: 2.5.3, current host: 127.0.0.1
+java.lang.IllegalStateException: Serialized class atg.taglib.json.util.JSONObject must implement java.io.Serializable
+	at com.alibaba.com.caucho.hessian.io.SerializerFactory.getDefaultSerializer(SerializerFactory.java:261)
+	at com.alibaba.com.caucho.hessian.io.SerializerFactory.getSerializer(SerializerFactory.java:233)
+	at com.alibaba.com.caucho.hessian.io.Hessian2Output.writeObject(Hessian2Output.java:406)
+	at com.alibaba.dubbo.common.serialize.support.hessian.Hessian2ObjectOutput.writeObject(Hessian2ObjectOutput.java:92)
+	at com.alibaba.dubbo.rpc.protocol.dubbo.DubboCodec.encodeResponseData(DubboCodec.java:200)
+	at com.alibaba.dubbo.remoting.exchange.codec.ExchangeCodec.encodeResponse(ExchangeCodec.java:276)
+	at com.alibaba.dubbo.remoting.exchange.codec.ExchangeCodec.encode(ExchangeCodec.java:77)
+	at com.alibaba.dubbo.rpc.protocol.dubbo.DubboCountCodec.encode(DubboCountCodec.java:39)
+	at com.alibaba.dubbo.remoting.transport.netty.NettyCodecAdapter$InternalEncoder.encode(NettyCodecAdapter.java:81)
+	at org.jboss.netty.handler.codec.oneone.OneToOneEncoder.handleDownstream(OneToOneEncoder.java:66)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendDownstream(DefaultChannelPipeline.java:591)
+	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendDownstream(DefaultChannelPipeline.java:776)
+	at org.jboss.netty.channel.SimpleChannelHandler.writeRequested(SimpleChannelHandler.java:304)
+	at com.alibaba.dubbo.remoting.transport.netty.NettyHandler.writeRequested(NettyHandler.java:99)
+	at org.jboss.netty.channel.SimpleChannelHandler.handleDownstream(SimpleChannelHandler.java:266)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendDownstream(DefaultChannelPipeline.java:591)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendDownstream(DefaultChannelPipeline.java:582)
+	at org.jboss.netty.channel.Channels.write(Channels.java:611)
+	at org.jboss.netty.channel.Channels.write(Channels.java:578)
+	at org.jboss.netty.channel.AbstractChannel.write(AbstractChannel.java:251)
+	at com.alibaba.dubbo.remoting.transport.netty.NettyChannel.send(NettyChannel.java:98)
+	at com.alibaba.dubbo.remoting.transport.AbstractPeer.send(AbstractPeer.java:51)
+	at com.alibaba.dubbo.remoting.exchange.support.header.HeaderExchangeHandler.received(HeaderExchangeHandler.java:171)
+	at com.alibaba.dubbo.remoting.transport.DecodeHandler.received(DecodeHandler.java:52)
+	at com.alibaba.dubbo.remoting.transport.dispatcher.ChannelEventRunnable.run(ChannelEventRunnable.java:82)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+2017-04-14 15:20:39 [DubboServerHandler-192.168.1.112:20881-thread-8] WARN  c.a.dubbo.remoting.exchange.codec.ExchangeCodec -  [DUBBO] Fail to encode response: Response [id=11, version=2.0.0, status=20, event=false, error=null, result=RpcResult [result={"status":200,"msg":"成功","roomid":181075,"host":"192.168.1.112","port":9090,"serverid":18,"master":1000046,"maxplayer":4,"minplayer":4,"maxcircle":2,"maxround":8,"circle":2,"round":8,"rate":1,"maxscore":0,"gameid":100000,"rulename":"2圈8局","serviceid":"ac96787c20cd11e7a22a9c4ba24c9711","freeroomtime":30,"account":55,"mastername":"萌萌1号","ruleid":2}, exception=null]], send bad_response info instead, cause: Serialized class atg.taglib.json.util.JSONObject must implement java.io.Serializable, dubbo version: 2.5.3, current host: 127.0.0.1
+java.lang.IllegalStateException: Serialized class atg.taglib.json.util.JSONObject must implement java.io.Serializable
+	at com.alibaba.com.caucho.hessian.io.SerializerFactory.getDefaultSerializer(SerializerFactory.java:261)
+	at com.alibaba.com.caucho.hessian.io.SerializerFactory.getSerializer(SerializerFactory.java:233)
+	at com.alibaba.com.caucho.hessian.io.Hessian2Output.writeObject(Hessian2Output.java:406)
+	at com.alibaba.dubbo.common.serialize.support.hessian.Hessian2ObjectOutput.writeObject(Hessian2ObjectOutput.java:92)
+	at com.alibaba.dubbo.rpc.protocol.dubbo.DubboCodec.encodeResponseData(DubboCodec.java:200)
+	at com.alibaba.dubbo.remoting.exchange.codec.ExchangeCodec.encodeResponse(ExchangeCodec.java:276)
+	at com.alibaba.dubbo.remoting.exchange.codec.ExchangeCodec.encode(ExchangeCodec.java:77)
+	at com.alibaba.dubbo.rpc.protocol.dubbo.DubboCountCodec.encode(DubboCountCodec.java:39)
+	at com.alibaba.dubbo.remoting.transport.netty.NettyCodecAdapter$InternalEncoder.encode(NettyCodecAdapter.java:81)
+	at org.jboss.netty.handler.codec.oneone.OneToOneEncoder.handleDownstream(OneToOneEncoder.java:66)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendDownstream(DefaultChannelPipeline.java:591)
+	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendDownstream(DefaultChannelPipeline.java:776)
+	at org.jboss.netty.channel.SimpleChannelHandler.writeRequested(SimpleChannelHandler.java:304)
+	at com.alibaba.dubbo.remoting.transport.netty.NettyHandler.writeRequested(NettyHandler.java:99)
+	at org.jboss.netty.channel.SimpleChannelHandler.handleDownstream(SimpleChannelHandler.java:266)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendDownstream(DefaultChannelPipeline.java:591)
+	at org.jboss.netty.channel.DefaultChannelPipeline.sendDownstream(DefaultChannelPipeline.java:582)
+	at org.jboss.netty.channel.Channels.write(Channels.java:611)
+	at org.jboss.netty.channel.Channels.write(Channels.java:578)
+	at org.jboss.netty.channel.AbstractChannel.write(AbstractChannel.java:251)
+	at com.alibaba.dubbo.remoting.transport.netty.NettyChannel.send(NettyChannel.java:98)
+	at com.alibaba.dubbo.remoting.transport.AbstractPeer.send(AbstractPeer.java:51)
+	at com.alibaba.dubbo.remoting.exchange.support.header.HeaderExchangeHandler.received(HeaderExchangeHandler.java:171)
+	at com.alibaba.dubbo.remoting.transport.DecodeHandler.received(DecodeHandler.java:52)
+	at com.alibaba.dubbo.remoting.transport.dispatcher.ChannelEventRunnable.run(ChannelEventRunnable.java:82)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+2017-04-14 15:28:45 [New I/O server worker #1-1] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 15:33:40 [New I/O server worker #1-1] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 16:17:24 [New I/O server worker #1-3] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 16:49:15 [DubboShutdownHook] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 16:50:29 [New I/O server worker #1-1] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 17:04:20 [New I/O server worker #1-2] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 17:06:58 [New I/O server worker #1-1] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 17:16:40 [New I/O server worker #1-2] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 17:25:37 [New I/O server worker #1-2] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 17:32:07 [DubboShutdownHook] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 17:45:51 [DubboShutdownHook] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 17:50:51 [New I/O server worker #1-2] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 17:53:55 [New I/O server worker #1-2] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 17:56:20 [New I/O server worker #1-3] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 17:58:40 [New I/O server worker #1-2] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 18:00:06 [New I/O server worker #1-2] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 18:02:22 [New I/O server worker #1-1] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 18:04:38 [New I/O server worker #1-2] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 18:31:28 [New I/O server worker #1-3] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 18:38:05 [New I/O server worker #1-2] WARN  c.alibaba.dubbo.remoting.transport.AbstractServer -  [DUBBO] All clients has discontected from /192.168.1.112:20881. You can graceful shutdown now., dubbo version: 2.5.3, current host: 127.0.0.1
+2017-04-14 21:23:18 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 21:23:19 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 21:23:21 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 21:23:22 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 21:23:23 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 21:23:24 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 21:23:25 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 21:23:26 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 21:23:27 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 21:23:28 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 21:23:29 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 21:23:31 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 21:23:32 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 21:23:33 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 21:23:34 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 21:23:35 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 21:23:36 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)
+2017-04-14 21:23:37 [main-SendThread(192.168.1.112:2181)] WARN  org.apache.zookeeper.ClientCnxn - Session 0x0 for server null, unexpected error, closing socket connection and attempting reconnect
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:717)
+	at org.apache.zookeeper.ClientCnxnSocketNIO.doTransport(ClientCnxnSocketNIO.java:361)
+	at org.apache.zookeeper.ClientCnxn$SendThread.run(ClientCnxn.java:1141)

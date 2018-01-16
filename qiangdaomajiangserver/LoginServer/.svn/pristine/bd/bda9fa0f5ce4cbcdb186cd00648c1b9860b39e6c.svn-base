@@ -1,0 +1,19 @@
+gameid=100001
+
+
+#center server host
+centerserver_host=http://192.168.1.112:8082
+
+guesthead=http://192.168.1.115/head/1.jpg
+allow_guest=1
+
+test_weixin_login_url=http://127.0.0.1:8082/1.json
+
+secretkey_100000=d952fe603ea9d61e16216fddba556eea
+secretkey_100001=7fac4fb1a7de3aade32c576c1393d6ba
+
+#test account
+ac1000001=123456
+ac1000002=123456
+ac1000003=123456
+ac1000004=123456
